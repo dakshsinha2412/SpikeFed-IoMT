@@ -1,0 +1,18 @@
+# requirements_pi.txt
+# Raspberry Pi (ARM / CPU-only) dependency list for SpikeFed-IoMT
+# ---------------------------------------------------------------
+# Install with:
+#   pip install -r requirements_pi.txt
+#
+# NOTE: PyTorch must be installed FIRST using the ARM-compatible wheel.
+#       The pi_install.sh script handles this automatically.
+#       Do NOT run this file before PyTorch is already present in the venv.
+#
+# PyTorch is intentionally NOT listed here to avoid pip installing the
+# wrong (x86) binary.  pi_install.sh uses the correct --index-url.
+
+snntorch
+flwr
+Pillow
+numpy
+psutil

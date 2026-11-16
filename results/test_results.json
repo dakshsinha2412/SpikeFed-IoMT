@@ -1,0 +1,101 @@
+{
+  "model_parameter_count": 13044,
+  "rounds": [
+    {
+      "round": 1,
+      "clients": [
+        {
+          "client_id": "0",
+          "train_loss": 1.3952287137508392,
+          "training_seconds": 0.7580238020000252,
+          "update_bytes": 52256
+        },
+        {
+          "client_id": "1",
+          "train_loss": 1.3952287137508392,
+          "training_seconds": 0.7025655730000153,
+          "update_bytes": 52256
+        }
+      ],
+      "client_evaluations": [
+        {
+          "client_id": "0",
+          "loss": 1.39703169465065,
+          "samples": 4,
+          "accuracy": 0.25,
+          "precision_macro": 0.0625,
+          "recall_macro": 0.25,
+          "f1_macro": 0.10000000149011612,
+          "f1_weighted": 0.10000000149011612,
+          "confusion_matrix": [
+            [
+              0,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ]
+        },
+        {
+          "client_id": "1",
+          "loss": 1.39703169465065,
+          "samples": 4,
+          "accuracy": 0.25,
+          "precision_macro": 0.0625,
+          "recall_macro": 0.25,
+          "f1_macro": 0.10000000149011612,
+          "f1_weighted": 0.10000000149011612,
+          "confusion_matrix": [
+            [
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              0,
+              1
+            ]
+          ]
+        }
+      ],
+      "global_accuracy": 0.25,
+      "global_loss": 1.39703169465065,
+      "communication_bytes": 104512,
+      "round_seconds": 2.3232715619999453
+    }
+  ],
+  "privacy_note": "Only model states and aggregate training metadata are exchanged. Basic FedAvg is not differential privacy or secure aggregation."
+}

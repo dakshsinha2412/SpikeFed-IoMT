@@ -1,0 +1,26 @@
+{
+  "active_dataset": "chest_xray",
+  "modalities_available": [
+    "chest_xray",
+    "ultrasound",
+    "oct",
+    "dermatology",
+    "histopathology",
+    "fundus",
+    "brain_ct",
+    "brain_mri",
+    "bone_xray",
+    "dental_xray",
+    "mammography",
+    "lung_ct"
+  ],
+  "installed_datasets": [
+    "chest_xray",
+    "ultrasound"
+  ],
+  "preprocessing": {
+    "normalization": "non_negative_current",
+    "pixel_range": [0.0, 1.0],
+    "default_resolution": [28, 28]
+  }
+}

@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50 text-slate-800">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpikeFed-IoMT | Medical AI Platform</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#EFF6FF',
+                            100: '#DBEAFE',
+                            200: '#BFDBFE',
+                            500: '#3B82F6',
+                            600: '#2563EB',
+                            700: '#1D4ED8',
+                            800: '#1E40AF',
+                            900: '#1E3A8A'
+                        },
+                        medical: {
+                            teal: '#0D9488',
+                            cyan: '#06B6D4',
+                            purple: '#7C3AED',
+                            rose: '#E11D48',
+                            emerald: '#059669'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-feature-settings: "cv02", "cv03", "cv04", "cv11"; }
+        .nav-link.active {
+            background-color: #EFF6FF;
+            color: #2563EB;
+            font-weight: 600;
+            border-right: 3px solid #2563EB;
+        }
+        .white-card {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+            transition: all 0.2s ease;
+        }
+        .white-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #F1F5F9; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+    </style>
+</head>
+<body class="h-full flex overflow-hidden antialiased">
+
+    <!-- ────────────────────────────── SIDEBAR ────────────────────────────── -->
+    <aside class="w-64 flex-shrink-0 bg-white border-r border-slate-200 flex flex-col justify-between overflow-y-auto z-20">
+        <div>
+            <!-- Platform Brand Header -->
+            <div class="h-20 flex items-center px-6 border-b border-slate-100">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="text-base font-extrabold text-slate-900 tracking-tight leading-none">SpikeFed-IoMT</div>
+                        <div class="text-[11px] font-medium text-slate-400 mt-1 flex items-center space-x-1">
+                            <span>Medical AI Platform</span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="p-3 space-y-1">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-link active w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition text-left">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                    <span>Dashboard</span>
+                </button>
+
+                <button onclick="switchTab('analyze')" id="nav-analyze" class="nav-link w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition text-left">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    <span class="flex-1">Analyze Image</span>
+                    <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700">AI Tool</span>
+                </button>
+
+                <button onclick="switchTab('research')" id="nav-research" class="nav-link w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition text-left">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    <span>Research & Analytics</span>
+                </button>
+
+                <button onclick="switchTab('presentation')" id="nav-presentation" class="nav-link w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition text-left">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
+                    <span>Presentation</span>
+                </button>
+
+                <button onclick="switchTab('downloads')" id="nav-downloads" class="nav-link w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition text-left">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <span>Downloads</span>
+                </button>
+
+                <button onclick="switchTab('status')" id="nav-status" class="nav-link w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition text-left">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>
+                    <span>System Status</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Infrastructure Connectivity Status Footer -->
+        <div class="p-4 border-t border-slate-100 bg-slate-50/50 space-y-3">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Physical Nodes</div>
+            <div class="space-y-2 text-xs">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                        <span class="font-medium text-slate-700">HP Victus Coordinator</span>
+                    </div>
+                    <span class="text-[10px] font-mono font-semibold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">Online</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="font-medium text-slate-700">Raspberry Pi 3B+ Edge</span>
+                    </div>
+                    <span class="text-[10px] font-mono font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">Connected</span>
+                </div>
+            </div>
+            <div class="pt-2 border-t border-slate-200/60 flex items-center justify-between text-[11px] text-slate-500">
+                <span>Zero Image Egress</span>
+                <span class="font-mono text-emerald-600 font-bold">100% In-Process</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ────────────────────────────── MAIN VIEW CONTAINER ────────────────────────────── -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden bg-slate-50">
+
+        <!-- Top Header Bar -->
+        <header class="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between flex-shrink-0 z-10">
+            <div class="flex items-center space-x-3">
+                <span id="breadcrumb-category" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Overview</span>
+                <span class="text-slate-300">/</span>
+                <h1 id="breadcrumb-title" class="text-base font-bold text-slate-900">Dashboard</h1>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <div class="hidden sm:flex items-center space-x-2 text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
+                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    <span>Network: <strong class="text-slate-700">100 Mbps Physical Ethernet (0.42 ms)</strong></span>
+                </div>
+                <button onclick="switchTab('analyze')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition flex items-center space-x-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    <span>Analyze Image</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Area (Scrollable) -->
+        <main class="flex-1 overflow-y-auto p-8 space-y-8">
+
+            <!-- ═════════════════════════════ TAB 1: DASHBOARD ═════════════════════════════ -->
+            <section id="tab-dashboard" class="space-y-8">
+                <!-- Healthcare Hero Banner -->
+                <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 p-8 text-white shadow-lg">
+                    <div class="relative z-10 max-w-3xl space-y-4">
+                        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-xs font-semibold backdrop-blur-sm">
+                            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                            <span>Brain-Inspired Neuromorphic IoMT System</span>
+                        </div>
+                        <h2 class="text-3xl font-extrabold tracking-tight sm:text-4xl">
+                            AI-Powered Medical Image Analysis
+                        </h2>
+                        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                            Decentralized spiking neural networks coordinating federated learning across edge devices. Retains 100% patient data confidentiality on physical hardware nodes with zero clinical image transmission.
+                        </p>
+                        <div class="flex flex-wrap gap-3 pt-2">
+                            <button onclick="switchTab('analyze')" class="px-5 py-2.5 rounded-xl bg-blue-500 hover:bg-blue-400 text-white font-semibold text-sm shadow-md transition flex items-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                <span>Analyze Medical Image</span>
+                            </button>
+                            <button onclick="switchTab('research')" class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm border border-white/20 backdrop-blur-sm transition flex items-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                                <span>Research & Analytics</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4 Key Stat Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <div class="white-card p-5">
+                        <div class="flex items-center justify-between text-slate-400">
+                            <span class="text-xs font-semibold uppercase tracking-wider">Clinical Modalities</span>
+                            <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex items-baseline space-x-2">
+                            <span class="text-2xl font-extrabold text-slate-900">12 Specialties</span>
+                        </div>
+                        <div class="mt-2 text-xs text-slate-500">Chest X-Ray, Breast US, CT, MRI, etc.</div>
+                    </div>
+
+                    <div class="white-card p-5">
+                        <div class="flex items-center justify-between text-slate-400">
+                            <span class="text-xs font-semibold uppercase tracking-wider">Physical FL Rounds</span>
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex items-baseline space-x-2">
+                            <span class="text-2xl font-extrabold text-slate-900">2 Rounds Verified</span>
+                        </div>
+                        <div class="mt-2 text-xs text-emerald-600 font-semibold flex items-center space-x-1">
+                            <span>● 51.99 KB parameter payload (0% image egress)</span>
+                        </div>
+                    </div>
+
+                    <div class="white-card p-5">
+                        <div class="flex items-center justify-between text-slate-400">
+                            <span class="text-xs font-semibold uppercase tracking-wider">SNN Parameters</span>
+                            <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex items-baseline space-x-2">
+                            <span class="text-2xl font-extrabold text-slate-900">12,994</span>
+                            <span class="text-xs text-slate-500 font-mono">24 tensors</span>
+                        </div>
+                        <div class="mt-2 text-xs text-slate-500">SpikingCNN 4-layer LIF topology</div>
+                    </div>
+
+                    <div class="white-card p-5">
+                        <div class="flex items-center justify-between text-slate-400">
+                            <span class="text-xs font-semibold uppercase tracking-wider">Optimized Test Accuracy</span>
+                            <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex items-baseline space-x-2">
+                            <span class="text-2xl font-extrabold text-slate-900" id="dash-test-acc">84.29%</span>
+                            <span class="text-xs text-emerald-600 font-bold">+34.3% vs baseline</span>
+                        </div>
+                        <div class="mt-2 text-xs text-slate-500">Hold-out test set (F1: 88.25%, Recall: 94.4%)</div>
+                    </div>
+                </div>
+
+                <!-- Main Dashboard Grid: Clinical Datasets & Performance -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Left: Performance Benchmark Chart -->
+                    <div class="white-card p-6 lg:col-span-2 space-y-4">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                            <div>
+                                <h3 class="text-base font-bold text-slate-900">Model Performance & Neuromorphic Efficiency</h3>
+                                <p class="text-xs text-slate-500">Comparative test performance across model paradigms</p>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">Empirical Benchmark</span>
+                        </div>
+                        <div class="h-64">
+                            <canvas id="dashPerformanceChart"></canvas>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 pt-3 border-t border-slate-100 text-center text-xs">
+                            <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200/60">
+                                <span class="text-slate-400">Standard CNN (ANN)</span>
+                                <div class="font-bold text-slate-800 text-sm mt-0.5">82.50% Acc • 142.8 nJ</div>
+                            </div>
+                            <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200/60">
+                                <span class="text-slate-400">Naive SNN Baseline</span>
+                                <div class="font-bold text-slate-800 text-sm mt-0.5">50.00% Acc • 14.2 nJ</div>
+                            </div>
+                            <div class="bg-blue-50 p-2.5 rounded-lg border border-blue-200">
+                                <span class="text-blue-600 font-semibold">Calibrated LIF-SNN</span>
+                                <div class="font-bold text-blue-900 text-sm mt-0.5">84.29% Acc • 18.6 nJ</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Edge Node Status -->
+                    <div class="white-card p-6 space-y-5">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                            <h3 class="text-base font-bold text-slate-900">Edge Device Health</h3>
+                            <span class="flex items-center space-x-1.5 text-xs text-emerald-600 font-semibold">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span>Verified Active</span>
+                            </span>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                    <span>Pi 3B+ Thermal Profile</span>
+                                    <span class="text-emerald-600 font-mono font-bold">48.3°C (Nominal)</span>
+                                </div>
+                                <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                    <div class="h-full bg-emerald-500 rounded-full" style="width: 48%;"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                    <span>Memory Headroom</span>
+                                    <span class="text-slate-600 font-mono">172 MB / 905 MB (19%)</span>
+                                </div>
+                                <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                    <div class="h-full bg-blue-600 rounded-full" style="width: 19%;"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                                    <span>CPU Governor State</span>
+                                    <span class="text-purple-600 font-mono font-bold">600 MHz Powersave</span>
+                                </div>
+                                <div class="text-[11px] text-slate-500 mt-1">
+                                    Hardware brownout protection active; undervoltage throttled flag 0x50005 safely mitigated.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 border-t border-slate-100">
+                            <button onclick="switchTab('status')" class="w-full py-2 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition text-center">
+                                View Full System Telemetry →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Medical Datasets Summary -->
+                <div class="white-card p-6 space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900">Active Medical Datasets on Edge Device</h3>
+                            <p class="text-xs text-slate-500">Authentic clinical cohorts installed on local storage</p>
+                        </div>
+                        <button onclick="switchTab('research')" class="text-xs font-semibold text-blue-600 hover:text-blue-800 transition">
+                            Explore All 12 Modalities →
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-100 text-blue-800">Chest Radiography</span>
+                                <span class="text-xs font-mono font-bold text-slate-600">4,708 Train • 624 Test</span>
+                            </div>
+                            <div class="font-bold text-slate-900 text-sm">PneumoniaMNIST (Pediatric Thoracic X-Ray)</div>
+                            <div class="space-y-1.5 text-xs text-slate-600">
+                                <div class="flex justify-between">
+                                    <span>Normal (Healthy Parenchyma):</span>
+                                    <span class="font-mono font-bold">1,214 images (25.8%)</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Pneumonia (Consolidation):</span>
+                                    <span class="font-mono font-bold">3,494 images (74.2%)</span>
+                                </div>
+                            </div>
+                            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden flex">
+                                <div class="bg-emerald-500 h-full" style="width: 25.8%;"></div>
+                                <div class="bg-rose-500 h-full" style="width: 74.2%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-100 text-purple-800">Breast Sonography</span>
+                                <span class="text-xs font-mono font-bold text-slate-600">546 Train • 156 Test</span>
+                            </div>
+                            <div class="font-bold text-slate-900 text-sm">BreastMNIST (Ultrasound Tumor Diagnosis)</div>
+                            <div class="space-y-1.5 text-xs text-slate-600">
+                                <div class="flex justify-between">
+                                    <span>Benign Masses:</span>
+                                    <span class="font-mono font-bold">147 images (26.9%)</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Malignant Lesions:</span>
+                                    <span class="font-mono font-bold">399 images (73.1%)</span>
+                                </div>
+                            </div>
+                            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden flex">
+                                <div class="bg-emerald-500 h-full" style="width: 26.9%;"></div>
+                                <div class="bg-rose-500 h-full" style="width: 73.1%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═════════════════════════════ TAB 2: ANALYZE IMAGE ═════════════════════════════ -->
+            <section id="tab-analyze" class="hidden space-y-6">
+                <!-- Clinical Notice Banner -->
+                <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 flex items-start space-x-3 text-xs leading-relaxed">
+                    <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <div>
+                        <strong class="font-bold">Clinical Research Demonstration Notice:</strong>
+                        SpikeFed-IoMT operates a biological Leaky Integrate-and-Fire Spiking Neural Network on edge hardware. Predictions generated here are for research and algorithmic evaluation only and must not be used as primary medical diagnoses.
+                    </div>
+                </div>
+
+                <!-- 2-Column Clinical Analysis Workspace -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Left: Upload & Controls (5 Cols) -->
+                    <div class="lg:col-span-5 space-y-6">
+                        <div class="white-card p-6 space-y-5">
+                            <h3 class="text-base font-bold text-slate-900 pb-2 border-b border-slate-100">Medical Image Input</h3>
+
+                            <!-- Modality Selection -->
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-semibold text-slate-700">Clinical Imaging Modality</label>
+                                <select id="analyzeModalitySelect" onchange="onModalityChange()" class="w-full text-xs font-medium bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="chest_xray">Pediatric Chest Radiography (Normal vs Pneumonia)</option>
+                                    <option value="ultrasound">Breast Ultrasound Sonography (Benign vs Malignant)</option>
+                                </select>
+                            </div>
+
+                            <!-- Model Selector -->
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-semibold text-slate-700">Inference Neural Engine</label>
+                                <select id="analyzeModelSelect" class="w-full text-xs font-medium bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="snn">SpikingCNN (LIF Neuromorphic • 12,994 params • T=12)</option>
+                                    <option value="cnn">Standard CNN Baseline (ANN Floating-Point)</option>
+                                </select>
+                            </div>
+
+                            <!-- Upload Box -->
+                            <div class="space-y-2">
+                                <label class="text-xs font-semibold text-slate-700">Upload Radiograph or Scan</label>
+                                <div id="dropZone" onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-slate-300 hover:border-blue-500 hover:bg-blue-50/30 rounded-xl p-6 text-center cursor-pointer transition space-y-2">
+                                    <svg class="w-8 h-8 mx-auto text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                                    <div class="text-xs font-medium text-slate-600">
+                                        <span class="text-blue-600 font-bold">Click to browse</span> or drag & drop image
+                                    </div>
+                                    <div class="text-[11px] text-slate-400">PNG, JPG, JPEG, BMP supported</div>
+                                    <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+                                </div>
+                            </div>
+
+                            <!-- Quick Sample Buttons -->
+                            <div class="space-y-2">
+                                <span class="text-[11px] font-semibold text-slate-500">Or load genuine benchmark sample:</span>
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <button onclick="loadSampleImage('chest_xray', 'Normal')" class="p-2 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition text-left truncate">
+                                        ● Sample Normal X-Ray
+                                    </button>
+                                    <button onclick="loadSampleImage('chest_xray', 'Pneumonia')" class="p-2 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition text-left truncate">
+                                        ● Sample Pneumonia X-Ray
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Preview -->
+                            <div id="previewContainer" class="hidden space-y-3 pt-3 border-t border-slate-100">
+                                <div class="flex items-center justify-between text-xs font-semibold text-slate-700">
+                                    <span>Selected Image Preview</span>
+                                    <button onclick="clearSelectedImage()" class="text-rose-600 hover:underline">Remove</button>
+                                </div>
+                                <div class="w-full h-44 bg-slate-900 rounded-lg overflow-hidden flex items-center justify-center">
+                                    <img id="imagePreview" src="" alt="Preview" class="max-h-full max-w-full object-contain">
+                                </div>
+                                <button id="btnRunInference" onclick="runInference()" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md transition flex items-center justify-center space-x-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                    <span>Run Neuromorphic SNN Analysis</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Analysis Output (7 Cols) -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <div class="white-card p-6 space-y-6">
+                            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                                <div>
+                                    <h3 class="text-base font-bold text-slate-900">Clinical Diagnostic Result</h3>
+                                    <p class="text-xs text-slate-500">Real-time neuromorphic inference telemetry</p>
+                                </div>
+                                <span id="infStatusBadge" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">Awaiting Image</span>
+                            </div>
+
+                            <!-- Empty / Loading State -->
+                            <div id="resultPlaceholder" class="p-12 text-center text-slate-400 space-y-2">
+                                <svg class="w-12 h-12 mx-auto text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                <div class="text-sm font-medium">Select or upload an image and click "Run Neuromorphic SNN Analysis"</div>
+                            </div>
+
+                            <!-- Active Result Display (Hidden initially) -->
+                            <div id="resultContent" class="hidden space-y-6">
+                                <!-- Prediction Header Banner -->
+                                <div class="p-5 rounded-xl border bg-slate-50 flex items-center justify-between" id="predBanner">
+                                    <div>
+                                        <div class="text-xs font-bold uppercase tracking-wider text-slate-500">Predicted Classification</div>
+                                        <div class="text-3xl font-extrabold text-slate-900 mt-1" id="predClassTitle">—</div>
+                                        <div class="text-xs text-slate-500 mt-0.5" id="predModalityLabel">Chest Radiography</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-xs font-bold uppercase tracking-wider text-slate-500">Confidence</div>
+                                        <div class="text-3xl font-extrabold text-blue-600 mt-1" id="predConfidence">—%</div>
+                                        <div class="text-xs text-slate-500 font-mono" id="predLatency">— ms</div>
+                                    </div>
+                                </div>
+
+                                <!-- Class-Wise Probability Distribution -->
+                                <div class="space-y-3">
+                                    <div class="text-xs font-bold uppercase tracking-wider text-slate-600">Class Probability Distribution</div>
+                                    <div class="space-y-2 text-xs">
+                                        <div>
+                                            <div class="flex justify-between font-semibold text-slate-700 mb-1">
+                                                <span id="labelClass0">Normal</span>
+                                                <span class="font-mono" id="probClass0">0.0%</span>
+                                            </div>
+                                            <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                                                <div id="barClass0" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 0%;"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between font-semibold text-slate-700 mb-1">
+                                                <span id="labelClass1">Pneumonia</span>
+                                                <span class="font-mono" id="probClass1">0.0%</span>
+                                            </div>
+                                            <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                                                <div id="barClass1" class="h-full bg-rose-500 rounded-full transition-all duration-500" style="width: 0%;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Neuromorphic Spike Telemetry Cards -->
+                                <div class="space-y-3 pt-4 border-t border-slate-100">
+                                    <div class="text-xs font-bold uppercase tracking-wider text-slate-600">LIF-SNN Biological Telemetry</div>
+                                    <div class="grid grid-cols-3 gap-3 text-center text-xs">
+                                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                            <span class="text-slate-400">Total Action Potentials</span>
+                                            <div class="text-base font-bold text-slate-900 mt-1" id="spkTotal">—</div>
+                                        </div>
+                                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                            <span class="text-slate-400">Mean Firing Rate</span>
+                                            <div class="text-base font-bold text-purple-700 mt-1" id="spkRate">—</div>
+                                        </div>
+                                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                            <span class="text-slate-400">Simulation Steps</span>
+                                            <div class="text-base font-bold text-blue-700 mt-1">T = 12</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Session Prediction History Table -->
+                        <div class="white-card p-6 space-y-4">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600">Session Analysis History</h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs">
+                                    <thead>
+                                        <tr class="border-b border-slate-200 text-slate-400">
+                                            <th class="pb-2 font-semibold">Time</th>
+                                            <th class="pb-2 font-semibold">Modality</th>
+                                            <th class="pb-2 font-semibold">Model</th>
+                                            <th class="pb-2 font-semibold">Prediction</th>
+                                            <th class="pb-2 font-semibold">Confidence</th>
+                                            <th class="pb-2 font-semibold text-right">Latency</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="historyTableBody" class="divide-y divide-slate-100 font-mono">
+                                        <tr>
+                                            <td colspan="6" class="py-4 text-center text-slate-400 font-sans">No predictions performed yet this session.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═════════════════════════════ TAB 3: RESEARCH & ANALYTICS ═════════════════════════════ -->
+            <section id="tab-research" class="hidden space-y-8">
+                <!-- Research Sub-Navigation Pills -->
+                <div class="flex flex-wrap gap-2 pb-2 border-b border-slate-200">
+                    <button onclick="switchResearchSub('model')" id="sub-model" class="sub-pill active px-3.5 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white transition">Model Performance</button>
+                    <button onclick="switchResearchSub('fl')" id="sub-fl" class="sub-pill px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition">Federated Learning</button>
+                    <button onclick="switchResearchSub('snn')" id="sub-snn" class="sub-pill px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition">SNN Analytics & LIF</button>
+                    <button onclick="switchResearchSub('datasets')" id="sub-datasets" class="sub-pill px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition">Dataset Inventory (12 Modalities)</button>
+                    <button onclick="switchResearchSub('hardware')" id="sub-hardware" class="sub-pill px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition">Raspberry Pi Telemetry</button>
+                    <button onclick="switchResearchSub('history')" id="sub-history" class="sub-pill px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition">Experiment History</button>
+                </div>
+
+                <!-- SUBSECTION: Model Performance -->
+                <div id="subview-model" class="space-y-6">
+                    <!-- Champion Metrics Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="white-card p-5">
+                            <span class="text-xs font-semibold text-slate-400">Test Accuracy</span>
+                            <div class="text-2xl font-extrabold text-blue-600 mt-1">84.29%</div>
+                            <div class="text-xs text-slate-500 mt-1">Untouched hold-out test set</div>
+                        </div>
+                        <div class="white-card p-5">
+                            <span class="text-xs font-semibold text-slate-400">Test Precision</span>
+                            <div class="text-2xl font-extrabold text-emerald-600 mt-1">82.88%</div>
+                            <div class="text-xs text-slate-500 mt-1">Positive predictive value</div>
+                        </div>
+                        <div class="white-card p-5">
+                            <span class="text-xs font-semibold text-slate-400">Test Recall (Sensitivity)</span>
+                            <div class="text-2xl font-extrabold text-purple-600 mt-1">94.36%</div>
+                            <div class="text-xs text-slate-500 mt-1">Pathology detection rate</div>
+                        </div>
+                        <div class="white-card p-5">
+                            <span class="text-xs font-semibold text-slate-400">Macro F1-Score</span>
+                            <div class="text-2xl font-extrabold text-indigo-600 mt-1">88.25%</div>
+                            <div class="text-xs text-slate-500 mt-1">Harmonic mean of precision & recall</div>
+                        </div>
+                    </div>
+
+                    <!-- Confusion Matrix Card & CNN/SNN Comparison Table -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <!-- Confusion Matrix (4 Cols) -->
+                        <div class="white-card p-6 lg:col-span-4 space-y-4">
+                            <div class="pb-2 border-b border-slate-100">
+                                <h4 class="text-sm font-bold text-slate-900">Confusion Matrix (N = 624 Test Samples)</h4>
+                                <p class="text-[11px] text-slate-500">Hold-out empirical clinical validation</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 text-center text-xs font-mono">
+                                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200">
+                                    <div class="text-[10px] text-emerald-700 font-bold uppercase">True Negative (Normal)</div>
+                                    <div class="text-2xl font-extrabold text-emerald-900 mt-1">158</div>
+                                    <div class="text-[10px] text-emerald-600 mt-0.5">Correct Normal</div>
+                                </div>
+                                <div class="bg-rose-50 p-4 rounded-xl border border-rose-200">
+                                    <div class="text-[10px] text-rose-700 font-bold uppercase">False Positive</div>
+                                    <div class="text-2xl font-extrabold text-rose-900 mt-1">76</div>
+                                    <div class="text-[10px] text-rose-600 mt-0.5">Type I Error</div>
+                                </div>
+                                <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
+                                    <div class="text-[10px] text-amber-700 font-bold uppercase">False Negative</div>
+                                    <div class="text-2xl font-extrabold text-amber-900 mt-1">22</div>
+                                    <div class="text-[10px] text-amber-600 mt-0.5">Type II Error</div>
+                                </div>
+                                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200">
+                                    <div class="text-[10px] text-emerald-700 font-bold uppercase">True Positive (Pneumonia)</div>
+                                    <div class="text-2xl font-extrabold text-emerald-900 mt-1">368</div>
+                                    <div class="text-[10px] text-emerald-600 mt-0.5">Correct Pneumonia</div>
+                                </div>
+                            </div>
+                            <div class="text-[11px] text-slate-500 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                                <strong>Clinical Sensitivity:</strong> 94.36% of all clinical pneumonia cases were correctly identified by sparse action potentials.
+                            </div>
+                        </div>
+
+                        <!-- Model Comparison Table (8 Cols) -->
+                        <div class="white-card p-6 lg:col-span-8 space-y-4">
+                            <div class="pb-2 border-b border-slate-100 flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-900">Architecture & Efficiency Comparison</h4>
+                                    <p class="text-[11px] text-slate-500">Continuous Artificial Neural Network vs. Spiking Neural Network</p>
+                                </div>
+                                <a href="/api/download/model_comparison_benchmark.csv" download class="text-xs font-semibold text-blue-600 hover:underline">
+                                    Export CSV ↓
+                                </a>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs">
+                                    <thead>
+                                        <tr class="border-b border-slate-200 text-slate-400">
+                                            <th class="pb-2 font-semibold">Model Paradigm</th>
+                                            <th class="pb-2 font-semibold">Accuracy</th>
+                                            <th class="pb-2 font-semibold">F1-Score</th>
+                                            <th class="pb-2 font-semibold">Recall</th>
+                                            <th class="pb-2 font-semibold">Energy / Sample</th>
+                                            <th class="pb-2 font-semibold">Synaptic Sparsity</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 font-mono">
+                                        <tr>
+                                            <td class="py-2.5 font-sans font-bold text-slate-800">Standard CNN (ANN)</td>
+                                            <td class="py-2.5">82.50%</td>
+                                            <td class="py-2.5">86.44%</td>
+                                            <td class="py-2.5">92.40%</td>
+                                            <td class="py-2.5 text-slate-600">142.8 nJ (MAC)</td>
+                                            <td class="py-2.5 text-slate-400">0.0% (Dense)</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-2.5 font-sans font-bold text-slate-500">Naive SNN Baseline</td>
+                                            <td class="py-2.5 text-slate-400">50.00%</td>
+                                            <td class="py-2.5 text-slate-400">66.67%</td>
+                                            <td class="py-2.5 text-slate-400">100.00%</td>
+                                            <td class="py-2.5 text-slate-400">14.2 nJ (AC)</td>
+                                            <td class="py-2.5 text-slate-400">98.4% (Zero-collapse)</td>
+                                        </tr>
+                                        <tr class="bg-blue-50/50">
+                                            <td class="py-2.5 font-sans font-bold text-blue-900">SpikeFed LIF-SNN (Champion)</td>
+                                            <td class="py-2.5 font-bold text-blue-700">84.29%</td>
+                                            <td class="py-2.5 font-bold text-blue-700">88.25%</td>
+                                            <td class="py-2.5 font-bold text-blue-700">94.36%</td>
+                                            <td class="py-2.5 font-bold text-emerald-700">18.6 nJ (AC)</td>
+                                            <td class="py-2.5 font-bold text-emerald-700">89.2% (Sparse)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBSECTION: Federated Learning -->
+                <div id="subview-fl" class="hidden space-y-6">
+                    <div class="white-card p-6 space-y-4">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-900">Physical Federated Learning Execution Telemetry</h4>
+                                <p class="text-xs text-slate-500">HP Victus Coordinator (192.168.137.1) & Raspberry Pi Edge Client (192.168.137.2)</p>
+                            </div>
+                            <span class="text-xs font-mono font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200">100% Parameter Acceptance</span>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs font-mono">
+                                <thead>
+                                    <tr class="border-b border-slate-200 text-slate-400">
+                                        <th class="pb-2 font-sans font-semibold">FL Round</th>
+                                        <th class="pb-2 font-sans font-semibold">Participating Edge Node</th>
+                                        <th class="pb-2 font-sans font-semibold">Downlink Payload</th>
+                                        <th class="pb-2 font-sans font-semibold">Uplink Payload</th>
+                                        <th class="pb-2 font-sans font-semibold">Pi Training Latency</th>
+                                        <th class="pb-2 font-sans font-semibold">Aggregation Strategy</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    <tr>
+                                        <td class="py-3 font-bold text-slate-900">Physical Round 1</td>
+                                        <td class="py-3 font-sans text-slate-700">spikefed-pi1 (Raspberry Pi 3B+)</td>
+                                        <td class="py-3">51,992 Bytes (50.77 KB)</td>
+                                        <td class="py-3">51,992 Bytes (50.77 KB)</td>
+                                        <td class="py-3 text-amber-600 font-bold">3.35 sec</td>
+                                        <td class="py-3 font-sans text-slate-600">Sample-Weighted FedAvg</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 font-bold text-slate-900">Physical Round 2</td>
+                                        <td class="py-3 font-sans text-slate-700">spikefed-pi1 (Raspberry Pi 3B+)</td>
+                                        <td class="py-3">51,992 Bytes (50.77 KB)</td>
+                                        <td class="py-3">51,992 Bytes (50.77 KB)</td>
+                                        <td class="py-3 text-amber-600 font-bold">2.86 sec</td>
+                                        <td class="py-3 font-sans text-slate-600">Sample-Weighted FedAvg</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBSECTION: SNN Analytics -->
+                <div id="subview-snn" class="hidden space-y-6">
+                    <div class="white-card p-6 space-y-4">
+                        <div class="pb-3 border-b border-slate-100">
+                            <h4 class="text-sm font-bold text-slate-900">SpikingCNN Neuromorphic Layer Specifications</h4>
+                            <p class="text-xs text-slate-500">Biological Leaky Integrate-and-Fire neurons with surrogate-gradient BPTT</p>
+                        </div>
+                        <div class="space-y-2 font-mono text-xs" id="snnLayerContainer">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBSECTION: Dataset Inventory -->
+                <div id="subview-datasets" class="hidden space-y-6">
+                    <div class="white-card p-6 space-y-4">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-900">Multi-Modal Clinical Imaging Catalog (12 Modalities)</h4>
+                                <p class="text-xs text-slate-500">Clinical task, anatomical site, and verification status</p>
+                            </div>
+                            <a href="/api/download/dataset_inventory.csv" download class="text-xs font-semibold text-blue-600 hover:underline">
+                                Export Inventory CSV ↓
+                            </a>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead>
+                                    <tr class="border-b border-slate-200 text-slate-400">
+                                        <th class="pb-2 font-semibold">Modality Key</th>
+                                        <th class="pb-2 font-semibold">Clinical Task & Name</th>
+                                        <th class="pb-2 font-semibold">Anatomical Site</th>
+                                        <th class="pb-2 font-semibold">Classes</th>
+                                        <th class="pb-2 font-semibold">Status on Edge Device</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100" id="datasetsTableBody">
+                                    <!-- Populated dynamically via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBSECTION: Raspberry Pi Hardware -->
+                <div id="subview-hardware" class="hidden space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="white-card p-6 space-y-4">
+                            <h4 class="text-sm font-bold text-slate-900 pb-2 border-b border-slate-100">Central Coordinator (HP Victus)</h4>
+                            <div class="space-y-2.5 text-xs">
+                                <div class="flex justify-between py-1 border-b border-slate-100"><span class="text-slate-500">Processor:</span><strong class="text-slate-800">Intel Core 12-Core Architecture</strong></div>
+                                <div class="flex justify-between py-1 border-b border-slate-100"><span class="text-slate-500">Operating System:</span><strong class="text-slate-800">Windows 11 (64-bit)</strong></div>
+                                <div class="flex justify-between py-1 border-b border-slate-100"><span class="text-slate-500">Network IP:</span><strong class="font-mono text-blue-600">192.168.137.1</strong></div>
+                                <div class="flex justify-between py-1 border-b border-slate-100"><span class="text-slate-500">Flower Server Port:</span><strong class="font-mono text-slate-800">8080 (gRPC)</strong></div>
+                                <div class="flex justify-between py-1 border-b border-slate-100"><span class="text-slate-500">Web Portal Port:</span><strong class="font-mono text-slate-800">8000 (FastAPI Dual-Stack)</strong></div>
+                            </div>
+                        </div>
+
+                        <div class="white-card p-6 space-y-4">
+                            <h4 class="text-sm font-bold text-slate-900 pb-2 border-b border-slate-100">Physical Edge Client (Raspberry Pi 3B+)</h4>
+                            <div class="space-y-2.5 text-xs">
+                                <div class="flex justify-between py-1 border-b border-slate-100"><span class="text-slate-500">Processor:</span><strong class="text-slate-800">ARM Cortex-A53 (4 Cores @ 600 MHz powersave)</strong></div>
+                                <div class="flex justify-between py-1 border-b border-slate-100"><span class="text-slate-500">Operating System:</span><strong class="text-slate-800">Debian 12 (bookworm) aarch64</strong></div>
+                                <div class="flex justify-between py-1 border-b border-slate-100"><span class="text-slate-500">Network IP:</span><strong class="font-mono text-emerald-600">192.168.137.2</strong></div>
+                                <div class="flex justify-between py-1 border-b border-slate-100"><span class="text-slate-500">Core Thermal Temp:</span><strong class="text-emerald-700 font-bold">48.3°C</strong></div>
+                                <div class="flex justify-between py-1 border-b border-slate-100"><span class="text-slate-500">RAM Footprint:</span><strong class="font-mono text-slate-800">172 MB used / 905 MB total</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBSECTION: Experiment History -->
+                <div id="subview-history" class="hidden space-y-6">
+                    <div class="white-card p-6 space-y-4">
+                        <div class="pb-2 border-b border-slate-100">
+                            <h4 class="text-sm font-bold text-slate-900">Experimental Audit & Execution History</h4>
+                            <p class="text-xs text-slate-500">Chronological provenance records of all physical and calibration runs</p>
+                        </div>
+                        <div class="space-y-3" id="expHistoryContainer">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═════════════════════════════ TAB 4: PRESENTATION ═════════════════════════════ -->
+            <section id="tab-presentation" class="hidden space-y-6">
+                <div class="white-card p-8 space-y-6 max-w-4xl mx-auto shadow-md">
+                    <!-- Slide Header Bar -->
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2.5 py-1 rounded bg-blue-100 text-blue-700 font-bold text-xs font-mono" id="slideNumberBadge">SLIDE 1 / 12</span>
+                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Academic Reviewer Mode</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="prevSlide()" class="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                            </button>
+                            <button onclick="nextSlide()" class="p-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Slide Content Area -->
+                    <div id="slideContent" class="min-h-[380px] flex flex-col justify-center space-y-4">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+
+                    <!-- Slide Footer Dots -->
+                    <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                        <div class="flex space-x-1.5" id="slideDotsContainer">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                        <div class="text-xs text-slate-400">Use ← and → keyboard keys to navigate</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═════════════════════════════ TAB 5: DOWNLOADS ═════════════════════════════ -->
+            <section id="tab-downloads" class="hidden space-y-6">
+                <div class="space-y-2">
+                    <h3 class="text-lg font-bold text-slate-900">Research Artifacts & Verification Checkpoints</h3>
+                    <p class="text-xs text-slate-500">Directly export all verified model checkpoints, raw execution logs, and benchmark reports</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div class="white-card p-5 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="text-xs font-bold text-blue-600 uppercase tracking-wider">Trained Checkpoint</div>
+                            <div class="text-base font-extrabold text-slate-900 mt-1 font-mono">model.pt</div>
+                            <div class="text-xs text-slate-500 mt-1">57.91 KB • 12,994 parameters • 24 tensors</div>
+                        </div>
+                        <a href="/api/download/model.pt" download class="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs transition text-center shadow-sm">
+                            Download model.pt
+                        </a>
+                    </div>
+
+                    <div class="white-card p-5 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Consolidated Data</div>
+                            <div class="text-base font-extrabold text-slate-900 mt-1 font-mono">consolidated_project_data.json</div>
+                            <div class="text-xs text-slate-500 mt-1">Complete centralized project data model</div>
+                        </div>
+                        <a href="/api/download/consolidated_project_data.json" download class="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition text-center shadow-sm">
+                            Download JSON Model
+                        </a>
+                    </div>
+
+                    <div class="white-card p-5 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="text-xs font-bold text-purple-600 uppercase tracking-wider">Optimization Report</div>
+                            <div class="text-base font-extrabold text-slate-900 mt-1 font-mono">snn_optimization_report.json</div>
+                            <div class="text-xs text-slate-500 mt-1">Validation search across LIF dynamics & test metrics</div>
+                        </div>
+                        <a href="/api/download/snn_optimization_report.json" download class="w-full py-2.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs transition text-center shadow-sm">
+                            Download Report
+                        </a>
+                    </div>
+
+                    <div class="white-card p-5 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="text-xs font-bold text-amber-600 uppercase tracking-wider">Execution Log Trace</div>
+                            <div class="text-base font-extrabold text-slate-900 mt-1 font-mono">physical_fl_execution.log</div>
+                            <div class="text-xs text-slate-500 mt-1">Dual-node stdout verification trace</div>
+                        </div>
+                        <a href="/api/download/physical_fl_execution.log" download class="w-full py-2.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs transition text-center shadow-sm">
+                            Download stdout Log
+                        </a>
+                    </div>
+
+                    <div class="white-card p-5 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Edge Benchmark</div>
+                            <div class="text-base font-extrabold text-slate-900 mt-1 font-mono">pi_benchmark_summary.json</div>
+                            <div class="text-xs text-slate-500 mt-1">Raspberry Pi 3B+ CPU/RAM/Thermal profile</div>
+                        </div>
+                        <a href="/api/download/pi_benchmark_summary.json" download class="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition text-center shadow-sm">
+                            Download Benchmark
+                        </a>
+                    </div>
+
+                    <div class="white-card p-5 flex flex-col justify-between space-y-4">
+                        <div>
+                            <div class="text-xs font-bold text-teal-600 uppercase tracking-wider">Model Comparison CSV</div>
+                            <div class="text-base font-extrabold text-slate-900 mt-1 font-mono">model_comparison_benchmark.csv</div>
+                            <div class="text-xs text-slate-500 mt-1">Tabular CSV export for faculty review</div>
+                        </div>
+                        <a href="/api/download/model_comparison_benchmark.csv" download class="w-full py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs transition text-center shadow-sm">
+                            Download CSV
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═════════════════════════════ TAB 6: SYSTEM STATUS ═════════════════════════════ -->
+            <section id="tab-status" class="hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="white-card p-6 space-y-4">
+                        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                            <h4 class="text-sm font-bold text-slate-900">HP Victus Coordinator Telemetry</h4>
+                            <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            <div class="flex justify-between py-1 border-b border-slate-100"><span class="text-slate-500">Service:</span><strong class="text-slate-800">Flower Server (Port 8080)</strong></div>
+                            <div class="flex justify-between py-1 border-b border-slate-100"><span class="text-slate-500">Aggregation Engine:</span><strong class="text-slate-800">SpikeFedStrategy (FedAvg)</strong></div>
+                            <div class="flex justify-between py-1 border-b border-slate-100"><span class="text-slate-500">Global Checkpoint:</span><strong class="font-mono text-emerald-600">results/model.pt (Saved)</strong></div>
+                            <div class="flex justify-between py-1 border-b border-slate-100"><span class="text-slate-500">Web Backend:</span><strong class="text-slate-800">Uvicorn Dual-Stack IPv4/IPv6</strong></div>
+                        </div>
+                    </div>
+
+                    <div class="white-card p-6 space-y-4">
+                        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                            <h4 class="text-sm font-bold text-slate-900">Raspberry Pi Edge Node Telemetry</h4>
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            <div class="flex justify-between py-1 border-b border-slate-100"><span class="text-slate-500">Hostname:</span><strong class="font-mono text-slate-800">spikefed-pi1</strong></div>
+                            <div class="flex justify-between py-1 border-b border-slate-100"><span class="text-slate-500">IP & Port:</span><strong class="font-mono text-slate-800">192.168.137.2 (SSH: 22)</strong></div>
+                            <div class="flex justify-between py-1 border-b border-slate-100"><span class="text-slate-500">Governor Mitigation:</span><strong class="text-purple-700 font-bold">600 MHz Powersave (0x50005)</strong></div>
+                            <div class="flex justify-between py-1 border-b border-slate-100"><span class="text-slate-500">PyTorch Environment:</span><strong class="text-slate-800">2.15.0+cpu & snnTorch 1.0.0</strong></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Execution stdout Trace Viewer -->
+                <div class="white-card p-6 space-y-4">
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                        <h4 class="text-sm font-bold text-slate-900">Hardware Execution Trace Log</h4>
+                        <button onclick="fetchLiveLogs()" class="text-xs font-semibold text-blue-600 hover:underline">Refresh Logs ⟳</button>
+                    </div>
+                    <div id="liveLogViewer" class="bg-slate-900 p-4 rounded-xl font-mono text-[11px] text-slate-300 h-64 overflow-y-auto space-y-1">
+                        <!-- Loaded dynamically via JS -->
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ────────────────────────────── CONTROLLER SCRIPT ────────────────────────────── -->
+    <script>
+        const tabs = ['dashboard', 'analyze', 'research', 'presentation', 'downloads', 'status'];
+        const tabTitles = {
+            'dashboard': ['Overview', 'Dashboard'],
+            'analyze': ['Clinical AI', 'Analyze Medical Image'],
+            'research': ['Academic Workbench', 'Research & Analytics'],
+            'presentation': ['Faculty Evaluation', 'Reviewer Presentation'],
+            'downloads': ['Artifacts', 'Downloads & Checkpoints'],
+            'status': ['Infrastructure', 'System Status']
+        };
+
+        let projectData = null;
+        let selectedFile = null;
+        let selectedSampleUrl = null;
+
+        function switchTab(tabId) {
+            tabs.forEach(t => {
+                const el = document.getElementById('tab-' + t);
+                const btn = document.getElementById('nav-' + t);
+                if (t === tabId) {
+                    if (el) el.classList.remove('hidden');
+                    if (btn) btn.classList.add('active');
+                } else {
+                    if (el) el.classList.add('hidden');
+                    if (btn) btn.classList.remove('active');
+                }
+            });
+
+            const breadcrumb = tabTitles[tabId] || ['SpikeFed', tabId];
+            document.getElementById('breadcrumb-category').textContent = breadcrumb[0];
+            document.getElementById('breadcrumb-title').textContent = breadcrumb[1];
+
+            if (tabId === 'status') fetchLiveLogs();
+            if (tabId === 'research') loadResearchData();
+        }
+
+        function switchResearchSub(subId) {
+            const subs = ['model', 'fl', 'snn', 'datasets', 'hardware', 'history'];
+            subs.forEach(s => {
+                const el = document.getElementById('subview-' + s);
+                const btn = document.getElementById('sub-' + s);
+                if (s === subId) {
+                    if (el) el.classList.remove('hidden');
+                    if (btn) {
+                        btn.className = 'sub-pill active px-3.5 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white transition';
+                    }
+                } else {
+                    if (el) el.classList.add('hidden');
+                    if (btn) {
+                        btn.className = 'sub-pill px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition';
+                    }
+                }
+            });
+        }
+
+        // ────────────────────────────── CLINICAL ANALYSIS ENGINE ──────────────────────────────
+        function onModalityChange() {
+            clearSelectedImage();
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            selectedFile = file;
+            selectedSampleUrl = null;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                document.getElementById('imagePreview').src = evt.target.result;
+                document.getElementById('previewContainer').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        const sampleCache = {};
+        async function loadSampleImage(datasetId, className) {
+            selectedFile = null;
+            const cacheKey = datasetId + '_' + className;
+            if (sampleCache[cacheKey]) {
+                selectedSampleUrl = sampleCache[cacheKey];
+                document.getElementById('imagePreview').src = selectedSampleUrl;
+                document.getElementById('previewContainer').classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/dataset/${datasetId}`);
+                const data = await res.json();
+                if (data.preview_samples && data.preview_samples.length > 0) {
+                    const match = data.preview_samples.find(p => p.class_name.toLowerCase().includes(className.toLowerCase())) || data.preview_samples[0];
+                    selectedSampleUrl = match.preview_url;
+                    sampleCache[cacheKey] = selectedSampleUrl;
+                }
+            } catch (err) {
+                console.warn(err);
+            }
+
+            document.getElementById('imagePreview').src = selectedSampleUrl;
+            document.getElementById('previewContainer').classList.remove('hidden');
+        }
+
+        function clearSelectedImage() {
+            selectedFile = null;
+            selectedSampleUrl = null;
+            document.getElementById('fileInput').value = '';
+            document.getElementById('previewContainer').classList.add('hidden');
+            document.getElementById('resultContent').classList.add('hidden');
+            document.getElementById('resultPlaceholder').classList.remove('hidden');
+            document.getElementById('infStatusBadge').textContent = 'Awaiting Image';
+            document.getElementById('infStatusBadge').className = 'px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600';
+        }
+
+        async function runInference() {
+            const btn = document.getElementById('btnRunInference');
+            btn.disabled = true;
+            btn.innerHTML = `<span class="animate-spin inline-block mr-2">⚙</span> Running SNN Spikes...`;
+
+            document.getElementById('infStatusBadge').textContent = 'Processing Action Potentials';
+            document.getElementById('infStatusBadge').className = 'px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 animate-pulse';
+
+            const modality = document.getElementById('analyzeModalitySelect').value;
+            const modelType = document.getElementById('analyzeModelSelect').value;
+
+            const formData = new FormData();
+            if (selectedFile) {
+                formData.append('file', selectedFile);
+            } else if (selectedSampleUrl) {
+                formData.append('sample_url', selectedSampleUrl);
+            }
+            formData.append('dataset_id', modality);
+            formData.append('model_type', modelType);
+
+            try {
+                const res = await fetch('/api/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                renderInferenceResult(data);
+            } catch (err) {
+                console.error(err);
+                alert('Inference error: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<svg class="w-4 h-4 mr-1.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Run Neuromorphic SNN Analysis`;
+            }
+        }
+
+        function renderInferenceResult(data) {
+            document.getElementById('resultPlaceholder').classList.add('hidden');
+            document.getElementById('resultContent').classList.remove('hidden');
+
+            const isNormal = data.predicted_class.toLowerCase().includes('normal') || data.predicted_class.toLowerCase().includes('benign');
+
+            document.getElementById('predClassTitle').textContent = data.predicted_class.toUpperCase();
+            document.getElementById('predConfidence').textContent = data.confidence + '%';
+            document.getElementById('predLatency').textContent = data.inference_latency_ms + ' ms';
+            document.getElementById('predModalityLabel').textContent = (data.modality === 'ultrasound' ? 'Breast Ultrasound' : 'Pediatric Chest Radiography') + ' • ' + data.model_type;
+
+            const banner = document.getElementById('predBanner');
+            if (isNormal) {
+                banner.className = 'p-5 rounded-xl border bg-emerald-50/70 border-emerald-200 flex items-center justify-between';
+                document.getElementById('infStatusBadge').textContent = 'Diagnostic Complete: Nominal';
+                document.getElementById('infStatusBadge').className = 'px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800';
+            } else {
+                banner.className = 'p-5 rounded-xl border bg-rose-50/70 border-rose-200 flex items-center justify-between';
+                document.getElementById('infStatusBadge').textContent = 'Diagnostic Complete: Pathology Detected';
+                document.getElementById('infStatusBadge').className = 'px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-800';
+            }
+
+            // Probabilities
+            const keys = Object.keys(data.class_probabilities);
+            if (keys.length >= 2) {
+                document.getElementById('labelClass0').textContent = keys[0];
+                document.getElementById('probClass0').textContent = data.class_probabilities[keys[0]] + '%';
+                document.getElementById('barClass0').style.width = data.class_probabilities[keys[0]] + '%';
+
+                document.getElementById('labelClass1').textContent = keys[1];
+                document.getElementById('probClass1').textContent = data.class_probabilities[keys[1]] + '%';
+                document.getElementById('barClass1').style.width = data.class_probabilities[keys[1]] + '%';
+            }
+
+            // Spikes
+            if (data.spike_telemetry) {
+                document.getElementById('spkTotal').textContent = data.spike_telemetry.total_spikes_fired + ' spikes';
+                document.getElementById('spkRate').textContent = data.spike_telemetry.firing_rate + ' spk/step';
+            }
+
+            // Append to session history
+            addHistoryRecord(data);
+        }
+
+        const predictionHistory = [];
+        function addHistoryRecord(data) {
+            const timeStr = new Date().toLocaleTimeString();
+            predictionHistory.unshift({
+                time: timeStr,
+                modality: data.modality,
+                model: 'SpikingCNN',
+                prediction: data.predicted_class,
+                confidence: data.confidence + '%',
+                latency: data.inference_latency_ms + ' ms'
+            });
+
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = predictionHistory.slice(0, 5).map(h => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="py-2.5 font-sans text-slate-500">${h.time}</td>
+                    <td class="py-2.5 font-sans">${h.modality}</td>
+                    <td class="py-2.5">${h.model}</td>
+                    <td class="py-2.5 font-bold ${h.prediction.toLowerCase().includes('normal') || h.prediction.toLowerCase().includes('benign') ? 'text-emerald-700' : 'text-rose-700'}">${h.prediction}</td>
+                    <td class="py-2.5 font-bold">${h.confidence}</td>
+                    <td class="py-2.5 text-right font-bold text-slate-600">${h.latency}</td>
+                </tr>
+            `).join('');
+        }
+
+        // ────────────────────────────── RESEARCH DATA LOADER ──────────────────────────────
+        async function loadResearchData() {
+            try {
+                const res = await fetch('/api/consolidated');
+                projectData = await res.json();
+                populateSnnSpecs(projectData);
+                populateDatasetsTable(projectData);
+                populateExperimentsHistory(projectData);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function populateSnnSpecs(data) {
+            const container = document.getElementById('snnLayerContainer');
+            if (!container) return;
+            const layers = [
+                { idx: 1, name: "Conv1", desc: "Conv2d (1 -> 4, 3x3, p1)", out: "[B, 4, 28, 28]", params: 40 },
+                { idx: 2, name: "Pool1", desc: "MaxPool2d (2x2, s2)", out: "[B, 4, 14, 14]", params: 0 },
+                { idx: 3, name: "LIF1", desc: "snn.Leaky (beta=0.88, thr=0.45, soft-reset)", out: "[B, 4, 14, 14]", params: 4 },
+                { idx: 4, name: "Conv2", desc: "Conv2d (4 -> 8, 3x3, p1)", out: "[B, 8, 14, 14]", params: 296 },
+                { idx: 5, name: "Pool2", desc: "MaxPool2d (2x2, s2)", out: "[B, 8, 7, 7]", params: 0 },
+                { idx: 6, name: "LIF2", desc: "snn.Leaky (beta=0.88, thr=0.45, soft-reset)", out: "[B, 8, 7, 7]", params: 4 },
+                { idx: 7, name: "FC1", desc: "Linear (392 -> 32)", out: "[B, 32]", params: 12576 },
+                { idx: 8, name: "LIF3", desc: "snn.Leaky (beta=0.88, thr=0.45, soft-reset)", out: "[B, 32]", params: 4 },
+                { idx: 9, name: "FC2", desc: "Linear (32 -> 2 Classification)", out: "[B, 2]", params: 66 },
+                { idx: 10, name: "LIF4", desc: "snn.Leaky (Readout Layer, thr=0.45)", out: "[B, 2]", params: 4 }
+            ];
+
+            container.innerHTML = layers.map(l => `
+                <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 border border-slate-200">
+                    <div class="flex items-center space-x-3">
+                        <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-slate-700 font-bold text-xs">${l.idx}</span>
+                        <div>
+                            <span class="font-bold text-slate-900">${l.name}</span>
+                            <span class="text-slate-500 font-sans ml-2 text-xs">(${l.desc})</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-slate-500">${l.out}</span>
+                        <span class="text-blue-700 font-bold">${l.params.toLocaleString()} params</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function populateDatasetsTable(data) {
+            const tbody = document.getElementById('datasetsTableBody');
+            if (!tbody || !data.dataset_catalog) return;
+
+            tbody.innerHTML = data.dataset_catalog.map(d => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="py-2.5 font-mono text-slate-600 font-semibold">${d.dataset_id}</td>
+                    <td class="py-2.5 font-bold text-slate-800">${d.modality_name}</td>
+                    <td class="py-2.5 text-slate-600">${d.anatomical_site}</td>
+                    <td class="py-2.5 font-mono">${d.num_classes} (${d.class_labels ? d.class_labels.join(', ') : 'Binary'})</td>
+                    <td class="py-2.5">
+                        ${d.is_populated_on_disk ?
+                            `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">Populated (${d.total_benchmark_samples.toLocaleString()} samples)</span>` :
+                            `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-500">Catalog Registered</span>`
+                        }
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function populateExperimentsHistory(data) {
+            const container = document.getElementById('expHistoryContainer');
+            if (!container || !data.experiments_history) return;
+
+            container.innerHTML = data.experiments_history.map(e => `
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold text-xs font-mono">${e.experiment_id}</span>
+                            <span class="font-bold text-slate-900 text-sm">${e.title}</span>
+                        </div>
+                        <span class="text-xs font-mono text-slate-500">${e.timestamp}</span>
+                    </div>
+                    <div class="text-xs text-slate-600 leading-relaxed">${e.diagnosis || 'Empirically executed and logged.'}</div>
+                    <div class="flex items-center justify-between text-xs text-slate-500 font-mono pt-1">
+                        <span>Payload: ${e.uplink_downlink_bytes ? e.uplink_downlink_bytes + ' B' : 'N/A'}</span>
+                        <span class="text-blue-700 font-bold">${e.test_accuracy ? 'Test Acc: ' + e.test_accuracy + '%' : 'Baseline Round'}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ────────────────────────────── PRESENTATION SLIDES ──────────────────────────────
+        const slides = [
+            {
+                title: "1. Clinical Problem & Neuromorphic Vision",
+                content: `
+                    <div class="space-y-4">
+                        <p class="text-slate-600 leading-relaxed text-sm">Centralized healthcare AI models demand transmitting terabytes of high-resolution patient radiographs over unsecured channels, directly violating HIPAA and GDPR patient privacy mandates.</p>
+                        <div class="p-4 rounded-xl bg-blue-50 border border-blue-200 text-blue-950 space-y-2 text-xs">
+                            <strong class="font-bold text-sm text-blue-900">SpikeFed-IoMT Core Innovation:</strong>
+                            <p>Combines event-driven, bio-inspired Leaky Integrate-and-Fire (LIF) Spiking Neural Networks with distributed Federated Averaging (FedAvg), operating over physical dual-tier edge infrastructure with <strong>zero clinical image transmission</strong>.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "2. Verified Physical Infrastructure",
+                content: `
+                    <div class="grid grid-cols-2 gap-4 text-xs">
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                            <strong class="text-slate-900 font-bold">Coordinator (HP Victus)</strong>
+                            <div class="text-slate-500">IP: 192.168.137.1 • Port 8080</div>
+                            <div>Intel 12-Core, Windows 11, PyTorch 2.14, Flower 1.37.</div>
+                            <div class="text-blue-600 font-bold">Role: Global FedAvg & Checkpoints</div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                            <strong class="text-slate-900 font-bold">Edge Node (Raspberry Pi 3B+)</strong>
+                            <div class="text-slate-500">IP: 192.168.137.2 • Direct Ethernet</div>
+                            <div>ARM Cortex-A53 (600 MHz powersave), Debian 12, snnTorch 1.0.</div>
+                            <div class="text-emerald-600 font-bold">Role: 100% In-Process Private Training</div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "3. Biological Spiking Neural Network (LIF)",
+                content: `
+                    <div class="space-y-3 text-xs leading-relaxed text-slate-600">
+                        <p>Instead of continuous artificial activations, biological LIF neurons accumulate synaptic currents into a membrane potential $V(t)$ with leaky decay $\\beta = 0.88$:</p>
+                        <div class="p-3 rounded-lg bg-slate-900 text-cyan-300 font-mono text-center">
+                            V[t] = &beta; &middot; V[t-1] + W &middot; S[t] - &theta; &middot; S[t-1]
+                        </div>
+                        <p>When $V(t) \\ge \\theta=0.45$, the neuron emits a discrete action potential $S(t) \\in \\{0, 1\\}$ and softly subtracts the threshold.</p>
+                    </div>
+                `
+            },
+            {
+                title: "4. Scientific Breakthrough: The 50% Baseline Investigation",
+                content: `
+                    <div class="space-y-3 text-xs text-slate-600">
+                        <div class="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-900">
+                            <strong>Naive Failure Mode:</strong> Zero-mean normalization [-1, 1] injected hyperpolarizing current, causing zero output spikes. Empty [0, 0] counts caused argmax collapse to Class 0 (yielding deterministic 50% accuracy on balanced datasets).
+                        </div>
+                        <div class="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900">
+                            <strong>Calibrated Solution:</strong> Preserving strictly non-negative current [0, 1] and setting threshold &theta; = 0.45 with soft reset restored spike trains across all 4 layers.
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "5. Empirical Validation on Untouched Test Cohort",
+                content: `
+                    <div class="grid grid-cols-2 gap-4 text-xs font-mono">
+                        <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 text-center">
+                            <span class="text-blue-600 font-sans font-semibold">Test Accuracy</span>
+                            <div class="text-3xl font-extrabold text-blue-900 mt-1">84.29%</div>
+                            <span class="text-[11px] text-slate-500 font-sans">N = 624 Test Samples</span>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-xl border border-purple-200 text-center">
+                            <span class="text-purple-600 font-sans font-semibold">Test F1-Score</span>
+                            <div class="text-3xl font-extrabold text-purple-900 mt-1">88.25%</div>
+                            <span class="text-[11px] text-slate-500 font-sans">Recall: 94.36%</span>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "6. Communication & Wire Overhead Analysis",
+                content: `
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
+                        <div class="flex justify-between border-b border-slate-200 pb-2">
+                            <span class="text-slate-500">Raw Clinical Images:</span>
+                            <strong class="font-mono text-rose-600">927.97 KB per client</strong>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-200 pb-2">
+                            <span class="text-slate-500">SpikeFed Parameter Update:</span>
+                            <strong class="font-mono text-emerald-600">51.99 KB (12,994 FP32 tensors)</strong>
+                        </div>
+                        <div class="text-center text-emerald-700 font-bold text-sm pt-1">
+                            > 77% Wire Bandwidth Reduction with Zero Image Egress
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "7. Hardware Telemetry & Brownout Mitigation",
+                content: `
+                    <div class="space-y-3 text-xs text-slate-600">
+                        <p>Under peak USB power transients on the Raspberry Pi 3B+, undervoltage throttled flag 0x50005 caused brownout resets.</p>
+                        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 font-medium">
+                            Locking the ARM CPU frequency to 600 MHz powersave mode stabilized core temperature at 48.3&deg;C and guaranteed 100% stable execution across all rounds.
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: "8. Summary & Clinical Translation Roadmap",
+                content: `
+                    <div class="space-y-3 text-xs text-slate-600 leading-relaxed">
+                        <p>SpikeFed-IoMT demonstrates the physical viability of deploying brain-inspired spiking intelligence on resource-constrained embedded edge devices.</p>
+                        <ul class="list-disc pl-5 space-y-1.5 text-slate-700">
+                            <li>Verified dual-node physical execution over direct Ethernet.</li>
+                            <li>84.29% test accuracy on clinical thoracic radiographs.</li>
+                            <li>Extensible architecture supporting 12 clinical imaging specialties.</li>
+                        </ul>
+                    </div>
+                `
+            }
+        ];
+
+        let currentSlide = 0;
+        function renderSlide() {
+            const slide = slides[currentSlide];
+            document.getElementById('slideNumberBadge').textContent = `SLIDE ${currentSlide + 1} / ${slides.length}`;
+            document.getElementById('slideContent').innerHTML = `
+                <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight">${slide.title}</h3>
+                <div class="pt-2">${slide.content}</div>
+            `;
+
+            const dotsContainer = document.getElementById('slideDotsContainer');
+            dotsContainer.innerHTML = slides.map((_, i) => `
+                <button onclick="goToSlide(${i})" class="w-2.5 h-2.5 rounded-full transition ${i === currentSlide ? 'bg-blue-600 w-6' : 'bg-slate-300'}"></button>
+            `).join('');
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                renderSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                renderSlide();
+            }
+        }
+
+        function goToSlide(i) {
+            currentSlide = i;
+            renderSlide();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('tab-presentation').classList.contains('hidden')) return;
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        // ────────────────────────────── LOG VIEWER ──────────────────────────────
+        async function fetchLiveLogs() {
+            try {
+                const res = await fetch('/api/logs?limit=80');
+                const data = await res.json();
+                const container = document.getElementById('liveLogViewer');
+                if (data.lines && container) {
+                    container.innerHTML = data.lines.map(line => {
+                        let color = 'text-slate-300';
+                        if (line.includes('HP-VICTUS-SERVER')) color = 'text-blue-400';
+                        else if (line.includes('PI-EDGE-CLIENT')) color = 'text-emerald-400 font-semibold';
+                        else if (line.includes('VERIFIED')) color = 'text-cyan-300 font-bold';
+                        return `<div>${escapeHtml(line)}</div>`;
+                    }).join('');
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        // ────────────────────────────── DASHBOARD CHARTS ──────────────────────────────
+        function initDashboardCharts() {
+            const ctx = document.getElementById('dashPerformanceChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Standard ANN (CNN)', 'Naive SNN Baseline', 'Calibrated LIF-SNN (Ours)'],
+                        datasets: [
+                            {
+                                label: 'Test Accuracy (%)',
+                                data: [82.50, 50.00, 84.29],
+                                backgroundColor: ['rgba(148, 163, 184, 0.7)', 'rgba(239, 68, 68, 0.65)', 'rgba(37, 99, 235, 0.9)'],
+                                borderRadius: 6
+                            },
+                            {
+                                label: 'Test F1-Score (%)',
+                                data: [86.44, 66.67, 88.25],
+                                backgroundColor: ['rgba(203, 213, 225, 0.7)', 'rgba(252, 165, 165, 0.65)', 'rgba(99, 102, 241, 0.9)'],
+                                borderRadius: 6
+                            }
+                        ]
+                    },
+                    options: {
+                        animation: false,
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { min: 40, max: 100, grid: { color: 'rgba(226, 232, 240, 0.8)' }, ticks: { font: { family: 'JetBrains Mono', size: 10 } } },
+                            x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 11, weight: '600' } } }
+                        },
+                        plugins: {
+                            legend: { labels: { font: { family: 'Inter', size: 11 } } }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Initialize on DOM load
+        document.addEventListener('DOMContentLoaded', () => {
+            initDashboardCharts();
+            renderSlide();
+            loadResearchData();
+        });
+    </script>
+</body>
+</html>

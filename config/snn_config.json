@@ -1,0 +1,12 @@
+{
+  "model_architecture": "SpikingCNN",
+  "neuron_model": "Leaky Integrate-and-Fire (snn.Leaky)",
+  "time_steps": 10,
+  "decay_beta": 0.90,
+  "threshold": 1.0,
+  "surrogate_gradient": "fast_sigmoid(slope=25)",
+  "reset_mechanism": "subtract",
+  "input_channels": 1,
+  "num_classes": 2,
+  "loss_function": "snntorch.functional.ce_rate_loss"
+}

@@ -1,0 +1,16 @@
+Component,Actual implementation / value,Evidence category
+Input,1 x 28 x 28 grayscale image,Source code
+Conv1 + LIF,"Conv2d 1->4, 3x3 padding 1; Leaky LIF",Source code
+Pool1,MaxPool2d 2,Source code
+Conv2 + LIF,"Conv2d 4->8, 3x3 padding 1; Leaky LIF",Source code
+Pool2,MaxPool2d 2; flattened 8 x 7 x 7 = 392,Source code
+Dense + LIF,Linear 392->32; Leaky LIF,Source code
+Output + LIF,Linear 32->4; Leaky LIF,Source code
+Temporal steps,10,Source code
+Membrane decay beta,0.9,Source code
+Threshold theta,Library default (not explicitly configured),Source audit
+Surrogate gradient,snnTorch fast_sigmoid(slope=25),Source code
+Encoding,Static normalized image presented each time step,Source code
+Reset mechanism,snnTorch Leaky library default; not explicitly configured,Source audit
+Trainable parameters,"13,044",Measured/source
+Checkpoint size,60017 bytes,Measured filesystem

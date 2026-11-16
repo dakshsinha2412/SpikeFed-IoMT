@@ -1,0 +1,132 @@
+[14:10:05] [ORCHESTRATOR] Starting HP Victus FL server on 0.0.0.0:8080...
+[14:10:05] [ORCHESTRATOR] Waiting for Flower server to bind port 8080...
+[14:10:08] [HP-VICTUS-SERVER] [93mWARNING [0m:   DEPRECATED FEATURE: flwr.server.start_server() is deprecated.
+[14:10:08] [HP-VICTUS-SERVER] 	Instead, use the `flower-superlink` CLI command to start a SuperLink as shown below:
+[14:10:08] [HP-VICTUS-SERVER] 		$ flower-superlink --insecure
+[14:10:08] [HP-VICTUS-SERVER] 	To view usage and all available options, run:
+[14:10:08] [HP-VICTUS-SERVER] 		$ flower-superlink --help
+[14:10:08] [HP-VICTUS-SERVER] 	Using `start_server()` is deprecated.
+[14:10:08] [HP-VICTUS-SERVER]             This is a deprecated feature. It will be removed
+[14:10:08] [HP-VICTUS-SERVER]             entirely in future versions of Flower.
+[14:10:08] [HP-VICTUS-SERVER] [92mINFO [0m:      Starting Flower server, config: num_rounds=2, no round_timeout
+[14:10:08] [HP-VICTUS-SERVER] [92mINFO [0m:      Flower ECE: gRPC server running (2 rounds), SSL is disabled
+[14:10:08] [HP-VICTUS-SERVER] [92mINFO [0m:      [INIT]
+[14:10:08] [HP-VICTUS-SERVER] [92mINFO [0m:      Using initial global parameters provided by strategy
+[14:10:08] [HP-VICTUS-SERVER] [92mINFO [0m:      Starting evaluation of initial global parameters
+[14:10:08] [HP-VICTUS-SERVER] [92mINFO [0m:      Evaluation returned no results (`None`)
+[14:10:08] [HP-VICTUS-SERVER] [92mINFO [0m:
+[14:10:08] [HP-VICTUS-SERVER] [92mINFO [0m:      [ROUND 1]
+[14:10:09] [ORCHESTRATOR] Flower server is listening on port 8080. Connecting to Raspberry Pi via SSH...
+[14:10:11] [ORCHESTRATOR] SSH connected to pi@192.168.137.2. Launching edge client...
+[14:10:54] [PI-EDGE-STDERR] [93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_numpy_client() is deprecated.
+[14:10:54] [PI-EDGE-STDERR] 	Instead, use `flwr.client.start_client()` by ensuring you first call the `.to_client()` method as shown below:
+[14:10:54] [PI-EDGE-STDERR] 	flwr.client.start_client(
+[14:10:54] [PI-EDGE-STDERR] 		server_address='<IP>:<PORT>',
+[14:10:54] [PI-EDGE-STDERR] 		client=FlowerClient().to_client(), # <-- where FlowerClient is of type flwr.client.NumPyClient object
+[14:10:54] [PI-EDGE-STDERR] 	)
+[14:10:54] [PI-EDGE-STDERR] 	Using `start_numpy_client()` is deprecated.
+[14:10:54] [PI-EDGE-STDERR]             This is a deprecated feature. It will be removed
+[14:10:54] [PI-EDGE-STDERR]             entirely in future versions of Flower.
+[14:10:54] [PI-EDGE-STDERR] [93mWARNING [0m:   DEPRECATED FEATURE: flwr.client.start_client() is deprecated.
+[14:10:54] [PI-EDGE-STDERR] 	Instead, use the `flower-supernode` CLI command to start a SuperNode as shown below:
+[14:10:54] [PI-EDGE-STDERR] 		$ flower-supernode --insecure --superlink='<IP>:<PORT>'
+[14:10:54] [PI-EDGE-STDERR] 	To view all available options, run:
+[14:10:54] [PI-EDGE-STDERR] 		$ flower-supernode --help
+[14:10:54] [PI-EDGE-STDERR] 	Using `start_client()` is deprecated.
+[14:10:54] [PI-EDGE-STDERR]             This is a deprecated feature. It will be removed
+[14:10:54] [PI-EDGE-STDERR]             entirely in future versions of Flower.
+[14:10:54] [HP-VICTUS-SERVER] [92mINFO [0m:      configure_fit: strategy sampled 1 clients (out of 1)
+[14:10:54] [PI-EDGE-STDERR] [92mINFO [0m:
+[14:10:54] [PI-EDGE-STDERR] [92mINFO [0m:      Received: train message 98f44606-bb56-4cce-9acb-05164a5c88ab
+[14:10:54] [PI-EDGE-CLIENT] [PI EDGE CLIENT] ======================================================
+[14:10:54] [PI-EDGE-CLIENT] [PI EDGE CLIENT] >>> PHYSICAL FL ROUND 1: FIT PHASE
+[14:10:54] [PI-EDGE-CLIENT] [PI EDGE CLIENT] Step 3: Received global model weights from HP Victus server
+[14:10:54] [PI-EDGE-CLIENT]          Tensors: 24 | Total Payload: 51992 bytes (50.77 KB)
+[14:10:54] [PI-EDGE-CLIENT] [PI EDGE CLIENT] Step 4: Training LIF-SNN locally on Raspberry Pi 3B+...
+[14:10:57] [PI-EDGE-CLIENT]          Local training finished: 30 images, 1 epoch(s)
+[14:10:57] [PI-EDGE-CLIENT]          Train Loss: 0.6931 | Spikes Fired: 0 | Time: 3.10s
+[14:10:57] [PI-EDGE-CLIENT] [PI EDGE CLIENT] Step 5: Transferring updated weights from Pi to HP Victus
+[14:10:57] [PI-EDGE-CLIENT]          Tensors: 24 | Uplink Payload: 51992 bytes (50.77 KB)
+[14:10:58] [PI-EDGE-STDERR] [92mINFO [0m:      Sent reply
+[14:10:58] [HP-VICTUS-SERVER] [92mINFO [0m:      aggregate_fit: received 1 results and 0 failures
+[14:10:58] [HP-VICTUS-SERVER] 14:10:58 | INFO  | server | --- FL Round 1 ---
+[14:10:58] [HP-VICTUS-SERVER] 14:10:58 | INFO  | server | [HP VICTUS SERVER] Step 5: Received 1 client update(s) over physical network.
+[14:10:58] [HP-VICTUS-SERVER] 14:10:58 | INFO  | server |   Client 1: SENT   ✓ | uncertainty=0.0000 threshold=0.0000
+[14:10:58] [HP-VICTUS-SERVER] 14:10:58 | INFO  | server | [HP VICTUS SERVER] Step 6: Performing FedAvg aggregation on HP Victus...
+[14:10:58] [HP-VICTUS-SERVER] [93mWARNING [0m:   No fit_metrics_aggregation_fn provided
+[14:10:58] [HP-VICTUS-SERVER] 14:10:58 | INFO  | server | [HP VICTUS SERVER] Step 6 Complete: Aggregated 1 / 1 client update(s).
+[14:10:58] [HP-VICTUS-SERVER] 14:10:58 | INFO  | server | [HP VICTUS SERVER] Step 7: Distributing updated global model back to edge client(s).
+[14:10:58] [HP-VICTUS-SERVER] 14:10:58 | INFO  | server |   Cumulative communication savings: 0.00%
+[14:10:58] [HP-VICTUS-SERVER] [92mINFO [0m:      configure_evaluate: strategy sampled 1 clients (out of 1)
+[14:10:58] [PI-EDGE-STDERR] [92mINFO [0m:
+[14:10:58] [PI-EDGE-STDERR] [92mINFO [0m:      Received: evaluate message d079d9a4-ac53-48a1-9826-f3e151355d04
+[14:10:58] [PI-EDGE-CLIENT] [PI EDGE CLIENT] >>> PHYSICAL FL ROUND 1: EVALUATE PHASE
+[14:10:58] [PI-EDGE-CLIENT] [PI EDGE CLIENT] Step 7: Received updated global model from HP Victus server
+[14:10:59] [PI-EDGE-CLIENT] [PI EDGE CLIENT] Evaluated on local dataset: Loss = 0.6931, Accuracy = 50.00%, Spikes = 0
+[14:10:59] [PI-EDGE-CLIENT] [PI EDGE CLIENT] Sending evaluation metrics back to HP Victus server
+[14:10:59] [PI-EDGE-CLIENT] [PI EDGE CLIENT] ======================================================
+[14:10:59] [PI-EDGE-STDERR] [92mINFO [0m:      Sent reply
+[14:10:59] [HP-VICTUS-SERVER] [92mINFO [0m:      aggregate_evaluate: received 1 results and 0 failures
+[14:10:59] [HP-VICTUS-SERVER] [93mWARNING [0m:   No evaluate_metrics_aggregation_fn provided
+[14:10:59] [HP-VICTUS-SERVER] [92mINFO [0m:
+[14:10:59] [HP-VICTUS-SERVER] [92mINFO [0m:      [ROUND 2]
+[14:10:59] [HP-VICTUS-SERVER] [92mINFO [0m:      configure_fit: strategy sampled 1 clients (out of 1)
+[14:10:59] [PI-EDGE-STDERR] [92mINFO [0m:
+[14:10:59] [PI-EDGE-STDERR] [92mINFO [0m:      Received: train message 5795caaf-ad20-4165-8a39-cf72b24f57e1
+[14:10:59] [PI-EDGE-CLIENT] [PI EDGE CLIENT] ======================================================
+[14:10:59] [PI-EDGE-CLIENT] [PI EDGE CLIENT] >>> PHYSICAL FL ROUND 2: FIT PHASE
+[14:10:59] [PI-EDGE-CLIENT] [PI EDGE CLIENT] Step 3: Received global model weights from HP Victus server
+[14:10:59] [PI-EDGE-CLIENT]          Tensors: 24 | Total Payload: 51992 bytes (50.77 KB)
+[14:10:59] [PI-EDGE-CLIENT] [PI EDGE CLIENT] Step 4: Training LIF-SNN locally on Raspberry Pi 3B+...
+[14:11:02] [PI-EDGE-CLIENT]          Local training finished: 30 images, 1 epoch(s)
+[14:11:02] [PI-EDGE-CLIENT]          Train Loss: 0.6931 | Spikes Fired: 0 | Time: 2.56s
+[14:11:02] [PI-EDGE-CLIENT] [PI EDGE CLIENT] Step 5: Transferring updated weights from Pi to HP Victus
+[14:11:02] [PI-EDGE-CLIENT]          Tensors: 24 | Uplink Payload: 51992 bytes (50.77 KB)
+[14:11:02] [PI-EDGE-STDERR] [92mINFO [0m:      Sent reply
+[14:11:02] [HP-VICTUS-SERVER] [92mINFO [0m:      aggregate_fit: received 1 results and 0 failures
+[14:11:02] [HP-VICTUS-SERVER] 14:11:02 | INFO  | server | --- FL Round 2 ---
+[14:11:02] [HP-VICTUS-SERVER] 14:11:02 | INFO  | server | [HP VICTUS SERVER] Step 5: Received 1 client update(s) over physical network.
+[14:11:02] [HP-VICTUS-SERVER] 14:11:02 | INFO  | server |   Client 1: SENT   ✓ | uncertainty=0.0000 threshold=0.0000
+[14:11:02] [HP-VICTUS-SERVER] 14:11:02 | INFO  | server | [HP VICTUS SERVER] Step 6: Performing FedAvg aggregation on HP Victus...
+[14:11:02] [HP-VICTUS-SERVER] 14:11:02 | INFO  | server | [HP VICTUS SERVER] Step 6 Complete: Aggregated 1 / 1 client update(s).
+[14:11:02] [HP-VICTUS-SERVER] 14:11:02 | INFO  | server | [HP VICTUS SERVER] Step 7: Distributing updated global model back to edge client(s).
+[14:11:02] [HP-VICTUS-SERVER] 14:11:02 | INFO  | server |   Cumulative communication savings: 0.00%
+[14:11:02] [HP-VICTUS-SERVER] [92mINFO [0m:      configure_evaluate: strategy sampled 1 clients (out of 1)
+[14:11:02] [PI-EDGE-STDERR] [92mINFO [0m:
+[14:11:02] [PI-EDGE-STDERR] [92mINFO [0m:      Received: evaluate message 7d7143e0-78af-45a9-adfc-f492e781012f
+[14:11:02] [PI-EDGE-CLIENT] [PI EDGE CLIENT] >>> PHYSICAL FL ROUND 2: EVALUATE PHASE
+[14:11:02] [PI-EDGE-CLIENT] [PI EDGE CLIENT] Step 7: Received updated global model from HP Victus server
+[14:11:03] [PI-EDGE-CLIENT] [PI EDGE CLIENT] Evaluated on local dataset: Loss = 0.6931, Accuracy = 50.00%, Spikes = 0
+[14:11:03] [PI-EDGE-CLIENT] [PI EDGE CLIENT] Sending evaluation metrics back to HP Victus server
+[14:11:03] [PI-EDGE-CLIENT] [PI EDGE CLIENT] ======================================================
+[14:11:03] [PI-EDGE-STDERR] [92mINFO [0m:      Sent reply
+[14:11:03] [HP-VICTUS-SERVER] [92mINFO [0m:      aggregate_evaluate: received 1 results and 0 failures
+[14:11:03] [HP-VICTUS-SERVER] [92mINFO [0m:
+[14:11:03] [HP-VICTUS-SERVER] [92mINFO [0m:      [SUMMARY]
+[14:11:03] [HP-VICTUS-SERVER] [92mINFO [0m:      Run finished 2 round(s) in 55.02s
+[14:11:03] [HP-VICTUS-SERVER] [92mINFO [0m:      	History (loss, distributed):
+[14:11:03] [HP-VICTUS-SERVER] [92mINFO [0m:      		round 1: 0.6931471824645996
+[14:11:03] [HP-VICTUS-SERVER] [92mINFO [0m:      		round 2: 0.6931471824645996
+[14:11:03] [HP-VICTUS-SERVER] [92mINFO [0m:      	History (metrics, distributed, fit):
+[14:11:03] [HP-VICTUS-SERVER] [92mINFO [0m:      	{'communication_savings': [(1, 0.0), (2, 0.0)]}
+[14:11:03] [HP-VICTUS-SERVER] [92mINFO [0m:
+[14:11:03] [PI-EDGE-STDERR] [92mINFO [0m:
+[14:11:03] [PI-EDGE-STDERR] [92mINFO [0m:      Received: reconnect message c867adb9-74f3-42aa-84ba-d76cc3da999c
+[14:11:03] [PI-EDGE-STDERR] [92mINFO [0m:      Disconnect and shut down
+[14:11:03] [HP-VICTUS-SERVER] 14:11:03 | INFO  | server | Saved final model checkpoint → results/model.pt
+[14:11:03] [HP-VICTUS-SERVER] 14:11:03 | INFO  | server | Round results saved → C:\Users\User\Downloads\UROP Project\results\round_results.json
+[14:11:03] [HP-VICTUS-SERVER] ====================================================
+[14:11:03] [HP-VICTUS-SERVER]   SpikeFed-IoMT FL Server  →  0.0.0.0:8080
+[14:11:03] [HP-VICTUS-SERVER]   Min clients required : 1
+[14:11:03] [HP-VICTUS-SERVER]   Federated rounds     : 2
+[14:11:03] [HP-VICTUS-SERVER]   Model classes        : 2
+[14:11:03] [HP-VICTUS-SERVER] ====================================================
+[14:11:03] [HP-VICTUS-SERVER] ┌────────────────────────────────────────────┐
+[14:11:03] [HP-VICTUS-SERVER] │  SpikeFed-IoMT Communication Efficiency    │
+[14:11:03] [HP-VICTUS-SERVER] ├────────────────────────────────────────────┤
+[14:11:03] [HP-VICTUS-SERVER] │  Total possible updates                   2  │
+[14:11:03] [HP-VICTUS-SERVER] │  Actual updates sent                      2  │
+[14:11:03] [HP-VICTUS-SERVER] │  Communication savings                0.00%  │
+[14:11:03] [HP-VICTUS-SERVER] └────────────────────────────────────────────┘
+[14:11:10] [ORCHESTRATOR] Raspberry Pi edge client completed with exit code: 0
+[14:11:10] [ORCHESTRATOR] HP Victus FL server exited with code: 0

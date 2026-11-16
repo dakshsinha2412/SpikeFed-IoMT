@@ -1,0 +1,18 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8080,
+    "strategy": "SpikeFedStrategy",
+    "min_clients": 1,
+    "fraction_fit": 1.0,
+    "fraction_evaluate": 1.0,
+    "rounds": 2,
+    "device": "HP Victus Laptop",
+    "ip_address": "192.168.137.1"
+  },
+  "aggregation": {
+    "algorithm": "Sample-Weighted Federated Averaging (FedAvg)",
+    "gating_threshold": 0.0,
+    "checkpoint_save_path": "results/model.pt"
+  }
+}

@@ -1,0 +1,4 @@
+model_architecture,paradigm,parameters,test_accuracy,precision,recall,f1_score,avg_energy_nj,computational_ops,sparsity_pct,data_retention
+Standard CNN (Baseline FP32),Continuous Activation (ANN),12994,82.5,81.2,92.4,86.44,142.8,Multiply-Accumulate (MAC),0.0,Centralized
+SpikeFed LIF-SNN (Baseline Naive),Neuromorphic Spiking (SNN),12994,50.0,50.0,100.0,66.67,14.2,Sparse Synaptic Additions (AC),98.4,Decentralized (100% In-Process)
+SpikeFed LIF-SNN (Calibrated Champion),Neuromorphic Spiking (SNN),12994,84.29,82.88,94.36,88.25,18.6,Sparse Synaptic Additions (AC),89.2,Decentralized (100% In-Process)

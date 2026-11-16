@@ -1,0 +1,5 @@
+Device: cpu; model parameters: 12978; synthetic data: False
+Round 1: accuracy=0.607, loss=0.699, bytes=155976
+Round 2: accuracy=0.607, loss=0.697, bytes=155976
+Round 3: accuracy=0.607, loss=0.698, bytes=155976
+Held-out test accuracy=0.333; saved C:\Users\User\Downloads\UROP Project\results\web_20261115_224601_results.json, checkpoints/global_model.pt, and ('C:\\Users\\User\\Downloads\\UROP Project\\results\\web_20261115_224601_results_metrics.png', 'C:\\Users\\User\\Downloads\\UROP Project\\results\\web_20261115_224601_results_confusion_matrix.png')

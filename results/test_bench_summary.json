@@ -1,0 +1,20 @@
+{
+  "device": "cpu",
+  "dataset_type": "synthetic",
+  "num_classes": 4,
+  "num_clients": 2,
+  "rounds": 2,
+  "local_epochs": 1,
+  "model_parameter_count": 13044,
+  "model_checkpoint_size_kb": 58.61,
+  "total_training_time_sec": 4.84,
+  "avg_round_time_sec": 2.41,
+  "ram_initial_mb": 0.0,
+  "ram_peak_mb": 0.0,
+  "avg_cpu_percent": 0.0,
+  "total_communication_bytes": 209024,
+  "total_communication_kb": 204.12,
+  "test_accuracy": 0.4,
+  "test_f1_macro": 0.35,
+  "test_loss": 1.3692
+}

@@ -1,5 +1,9 @@
-torch
-torchvision
-snntorch
-numpy
-flwr
+# CPU-compatible development dependencies. Install a matching PyTorch wheel first if needed.
+torch>=2.2
+torchvision>=0.17
+snntorch>=0.9
+numpy>=1.26
+flwr>=1.8,<2
+Pillow>=10
+streamlit>=1.35
+matplotlib>=3.8

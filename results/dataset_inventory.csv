@@ -1,0 +1,13 @@
+dataset_id,modality_name,category,anatomical_site,is_populated_on_disk,preview_image_count,total_benchmark_samples,num_classes,license
+chest_xray,Pediatric Chest Radiography (Pneumonia Detection),X-Ray,Thorax / Lungs,True,32,5856,2,CC BY 4.0
+ultrasound,Breast Sonography Tumor Assessment,Ultrasound,Breast / Mammary Gland,True,120,780,2,CC BY 4.0
+oct,Retinal Optical Coherence Tomography (OCT),OCT,Retina / Macula,True,0,0,4,CC BY 4.0
+dermatology,Pigmented Skin Lesions (HAM10000),Dermatology,Skin / Cutaneous,False,0,0,7,CC BY-NC 4.0
+histopathology,Colorectal Adenocarcinoma Tissue Microscopy,Histopathology,Colorectal Mucosa,False,0,0,9,CC BY 4.0
+fundus,Diabetic Retinopathy Fundus Grading,Fundus,Retina / Posterior Pole,False,0,0,5,CC BY 4.0
+brain_ct,Abdominal Organ & Tissue Cross-Sectional CT,CT,Abdomen / Torso,False,0,0,11,CC BY 4.0
+brain_mri,Brain Structural MRI (Glioma / Meningioma),MRI,Brain / Neurocranium,False,0,0,3,CC BY 4.0
+bone_xray,Musculoskeletal Radiograph Abnormality (MURA),X-Ray,Upper Extremity (Finger/Wrist/Forearm/Elbow/Shoulder),False,0,0,2,Research Use Only
+dental_xray,Panoramic Dental Radiography (Caries & Bone Loss),X-Ray,Maxillofacial / Dentition,False,0,0,2,CC BY-NC 4.0
+mammography,Digital Mammography (CBIS-DDSM),X-Ray,Breast (CC & MLO Projections),False,0,0,2,TCIA Data Usage Policy
+lung_ct,Pulmonary Nodule Screening CT (LIDC-IDRI),CT,Thorax / Lungs,False,0,0,2,TCIA Data Usage Policy

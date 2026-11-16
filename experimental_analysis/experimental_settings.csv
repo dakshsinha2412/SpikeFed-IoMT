@@ -1,0 +1,17 @@
+Setting,Actual value,Evidence category
+Dataset,SyntheticMedicalImages (pipeline-test only),Source/results
+Total images,96 (24 per synthetic class x 4),Source code
+Split,70% train = 67; 15% validation = 14; 15% test = 15,Source code/calculated
+Classes,4 synthetic classes,Source code
+Image processing,"grayscale; resize 28x28; ToTensor; Normalize(mean=0.5,std=0.5)",Source code
+Clients,3,Saved IID/non-IID records
+Rounds,3,Saved IID/non-IID records
+Local epochs,1,main.py default/config
+Batch size,8,Saved run configuration/default
+Optimizer,Adam,Source code
+Learning rate,0.001,Source code
+Loss,snnTorch ce_rate_loss,Source code
+Seed,42,main.py default
+Device,CPU in saved runs,Run output/config
+Precision,PyTorch default float32; not explicitly logged,Source audit
+FedAvg,sample-count weighted mean,Source code

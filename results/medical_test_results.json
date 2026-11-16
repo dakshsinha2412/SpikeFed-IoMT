@@ -1,0 +1,161 @@
+{
+  "model_parameter_count": 12978,
+  "rounds": [
+    {
+      "round": 1,
+      "clients": [
+        {
+          "client_id": "Hospital 1",
+          "train_loss": 0.6931471824645996,
+          "training_seconds": 0.8345323000000917,
+          "update_bytes": 51992
+        },
+        {
+          "client_id": "Hospital 2",
+          "train_loss": 0.6931471824645996,
+          "training_seconds": 0.18233070000019325,
+          "update_bytes": 51992
+        }
+      ],
+      "client_evaluations": [
+        {
+          "client_id": "Hospital 1",
+          "loss": 0.6931471824645996,
+          "samples": 14,
+          "accuracy": 0.5714285969734192,
+          "precision_macro": 0.2857142984867096,
+          "recall_macro": 0.5,
+          "f1_macro": 0.3636363744735718,
+          "f1_weighted": 0.41558441519737244,
+          "confusion_matrix": [
+            [
+              8,
+              0
+            ],
+            [
+              6,
+              0
+            ]
+          ]
+        },
+        {
+          "client_id": "Hospital 2",
+          "loss": 0.6931471824645996,
+          "samples": 14,
+          "accuracy": 0.6428571343421936,
+          "precision_macro": 0.3214285671710968,
+          "recall_macro": 0.5,
+          "f1_macro": 0.3913043737411499,
+          "f1_weighted": 0.503105640411377,
+          "confusion_matrix": [
+            [
+              9,
+              0
+            ],
+            [
+              5,
+              0
+            ]
+          ]
+        }
+      ],
+      "global_accuracy": 0.6071428656578064,
+      "global_loss": 0.6931471824645996,
+      "communication_bytes": 103984,
+      "round_seconds": 1.2513667000000623
+    },
+    {
+      "round": 2,
+      "clients": [
+        {
+          "client_id": "Hospital 1",
+          "train_loss": 0.6931471824645996,
+          "training_seconds": 0.3022994000000381,
+          "update_bytes": 51992
+        },
+        {
+          "client_id": "Hospital 2",
+          "train_loss": 0.6931471824645996,
+          "training_seconds": 0.2352697999999691,
+          "update_bytes": 51992
+        }
+      ],
+      "client_evaluations": [
+        {
+          "client_id": "Hospital 1",
+          "loss": 0.6931471824645996,
+          "samples": 14,
+          "accuracy": 0.5714285969734192,
+          "precision_macro": 0.2857142984867096,
+          "recall_macro": 0.5,
+          "f1_macro": 0.3636363744735718,
+          "f1_weighted": 0.41558441519737244,
+          "confusion_matrix": [
+            [
+              8,
+              0
+            ],
+            [
+              6,
+              0
+            ]
+          ]
+        },
+        {
+          "client_id": "Hospital 2",
+          "loss": 0.6931471824645996,
+          "samples": 14,
+          "accuracy": 0.6428571343421936,
+          "precision_macro": 0.3214285671710968,
+          "recall_macro": 0.5,
+          "f1_macro": 0.3913043737411499,
+          "f1_weighted": 0.503105640411377,
+          "confusion_matrix": [
+            [
+              9,
+              0
+            ],
+            [
+              5,
+              0
+            ]
+          ]
+        }
+      ],
+      "global_accuracy": 0.6071428656578064,
+      "global_loss": 0.6931471824645996,
+      "communication_bytes": 103984,
+      "round_seconds": 0.788922599999978,
+      "held_out_test": {
+        "loss": 0.6931471824645996,
+        "samples": 6,
+        "accuracy": 0.3333333432674408,
+        "precision_macro": 0.1666666716337204,
+        "recall_macro": 0.5,
+        "f1_macro": 0.25,
+        "f1_weighted": 0.1666666716337204,
+        "confusion_matrix": [
+          [
+            2,
+            0
+          ],
+          [
+            4,
+            0
+          ]
+        ]
+      },
+      "run_configuration": {
+        "num_clients": 2,
+        "communication_rounds": 2,
+        "local_epochs": 1,
+        "batch_size": 8,
+        "distribution": "iid",
+        "dataset_type": "real_image_folder",
+        "data_dir": "uploaded_datasets/dataset_20261115_224756",
+        "elapsed_seconds": 2.0936578999999256
+      }
+    }
+  ],
+  "privacy_note": "Only model states and aggregate training metadata are exchanged. Basic FedAvg is not differential privacy or secure aggregation."
+}

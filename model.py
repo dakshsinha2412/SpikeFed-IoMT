@@ -1,90 +1,47 @@
+"""Compact, trainable spiking model used by every federated client."""
+from __future__ import annotations
 import torch
-import torch.nn as nn
+from torch import nn
 import snntorch as snn
 from snntorch import surrogate
 
 class SpikingCNN(nn.Module):
-    """
-    A Spiking Convolutional Neural Network (SNN) that processes 
-    MRI images and outputs spike trains.
-    """
-    def __init__(self, num_classes=4):
-        super(SpikingCNN, self).__init__()
-        
-        # Initialize surrogate gradient for Backpropagation Through Time (BPTT)
-        spike_grad = surrogate.fast_sigmoid(slope=25)
-        
-        # Standard convolutional layers acting as feature extractors before spiking neurons
-        self.conv1 = nn.Conv2d(1, 12, kernel_size=3, padding=1)
-        self.lif1 = snn.Leaky(beta=0.9, spike_grad=spike_grad)
-        
-        self.pool = nn.MaxPool2d(2, 2)
-        
-        self.conv2 = nn.Conv2d(12, 16, kernel_size=3, padding=1)
-        self.lif2 = snn.Leaky(beta=0.9, spike_grad=spike_grad)
-        
-        # Assuming input image size is adjusted to 28x28. After two pooling layers (if we had them),
-        # but here we have one pool: 28 -> 14. 
-        # (7 * 7 * 16) = 784 (since pool is called twice in forward pass)
-        self.fc1 = nn.Linear(784, 128)
-        self.lif3 = snn.Leaky(beta=0.9, spike_grad=spike_grad)
-        
-        self.fc2 = nn.Linear(128, num_classes)
-        self.lif4 = snn.Leaky(beta=0.9, spike_grad=spike_grad)
-        
-    def forward(self, x, num_steps=20):
-        """
-        Forward pass converting static images to spike trains over T steps.
-        """
-        # Initialize hidden states
-        mem1 = self.lif1.init_leaky()
-        mem2 = self.lif2.init_leaky()
-        mem3 = self.lif3.init_leaky()
-        mem4 = self.lif4.init_leaky()
-        
-        # Record outputs over time
-        spk_rec = []
-        mem_rec = []
-        
-        # Simulate over time
-        for step in range(num_steps):
-            cur1 = self.pool(self.conv1(x))
-            spk1, mem1 = self.lif1(cur1, mem1)
-            
-            # Using pool again to reduce dimensions 14 -> 7
-            cur2 = self.pool(self.conv2(spk1))
-            spk2, mem2 = self.lif2(cur2, mem2)
-            
-            # Flatten for Linear layers
-            cur_flat = cur2.view(cur2.size(0), -1)
-            
-            cur3 = self.fc1(cur_flat)
-            spk3, mem3 = self.lif3(cur3, mem3)
-            
-            cur4 = self.fc2(spk3)
-            spk4, mem4 = self.lif4(cur4, mem4)
-            
-            spk_rec.append(spk4)
-            mem_rec.append(mem4)
-            
-        # Return stacked lists: shape shape [num_steps, batch_size, num_classes]
-        return torch.stack(spk_rec), torch.stack(mem_rec)
+    """LIF convolutional SNN with surrogate-gradient BPTT."""
+    def __init__(self, num_classes: int = 2, in_channels: int = 1, beta: float = 0.9, threshold: float = 0.5):
+        super().__init__()
+        grad = surrogate.fast_sigmoid(slope=25)
+        self.conv1, self.pool1 = nn.Conv2d(in_channels, 4, 3, padding=1), nn.MaxPool2d(2)
+        self.lif1 = snn.Leaky(beta=beta, threshold=threshold, spike_grad=grad)
+        self.conv2, self.pool2 = nn.Conv2d(4, 8, 3, padding=1), nn.MaxPool2d(2)
+        self.lif2 = snn.Leaky(beta=beta, threshold=threshold, spike_grad=grad)
+        self.fc1, self.lif3 = nn.Linear(8 * 7 * 7, 32), snn.Leaky(beta=beta, threshold=threshold, spike_grad=grad)
+        self.fc2, self.lif4 = nn.Linear(32, num_classes), snn.Leaky(beta=beta, threshold=threshold, spike_grad=grad)
 
-def measure_uncertainty(spike_outputs):
-    """
-    Measures the predictive uncertainty based on spike rates.
-    High uncertainty -> Model is confused -> Needs to send update to Server.
-    Low uncertainty -> Model is confident -> Can skip to save communication.
-    """
-    # Count total spikes per class for each sample
-    spike_counts = spike_outputs.sum(dim=0) # Shape: [batch_size, num_classes]
-    
-    # Calculate probabilities from spike rates (softmax over rates)
-    probs = torch.softmax(spike_counts.float(), dim=1)
-    
-    # Calculate entropy for each sample (handling log(0))
-    entropy = -torch.sum(probs * torch.log(probs + 1e-6), dim=1)
-    
-    # Return mean uncertainty of the batch
-    mean_uncertainty = entropy.mean().item()
-    return mean_uncertainty
+    def forward(self, x: torch.Tensor, num_steps: int = 10):
+        mem1, mem2 = self.lif1.init_leaky(), self.lif2.init_leaky()
+        mem3, mem4 = self.lif3.init_leaky(), self.lif4.init_leaky()
+        spikes, membranes = [], []
+        for _ in range(num_steps):
+            spk1, mem1 = self.lif1(self.conv1(x), mem1)
+            spk2, mem2 = self.lif2(self.conv2(self.pool1(spk1)), mem2)
+            spk3, mem3 = self.lif3(self.fc1(self.pool2(spk2).flatten(1)), mem3)
+            spk4, mem4 = self.lif4(self.fc2(spk3), mem4)
+            spikes.append(spk4); membranes.append(mem4)
+        return torch.stack(spikes), torch.stack(membranes)
+
+def parameter_count(model: nn.Module) -> int:
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+def measure_uncertainty(spike_outputs: torch.Tensor) -> float:
+    probs = torch.softmax(spike_outputs.sum(dim=0).float(), dim=1)
+    return float((-(probs * (probs + 1e-8).log()).sum(dim=1).mean()).item())
+
+def get_spike_telemetry(spikes: torch.Tensor) -> dict:
+    total_spikes = float(spikes.sum().item())
+    steps, batch_size, classes = spikes.shape
+    firing_rate = total_spikes / (steps * batch_size * classes) if (steps * batch_size * classes) > 0 else 0.0
+    return {
+        "total_spikes": total_spikes,
+        "firing_rate": round(firing_rate, 4),
+        "zero_spike_collapse": (total_spikes == 0)
+    }

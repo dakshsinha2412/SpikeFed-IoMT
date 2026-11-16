@@ -1,0 +1,19 @@
+{
+  "client": {
+    "client_id": 1,
+    "device_name": "Raspberry Pi 3 Model B+",
+    "ip_address": "192.168.137.2",
+    "hostname": "spikefed-pi1",
+    "server_address": "192.168.137.1:8080",
+    "local_epochs": 1,
+    "batch_size": 8,
+    "learning_rate": 0.003,
+    "dataset_path": "data/chest_xray/train"
+  },
+  "hardware_limits": {
+    "cpu_governor": "powersave",
+    "max_freq_khz": 600000,
+    "max_ram_limit_mb": 512,
+    "brownout_prevention": true
+  }
+}

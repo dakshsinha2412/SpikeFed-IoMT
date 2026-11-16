@@ -1,0 +1,36 @@
+{
+  "timestamp": "20261116_141103",
+  "total_possible_updates": 2,
+  "actual_sent_updates": 2,
+  "overall_communication_savings_pct": 0.0,
+  "rounds": [
+    {
+      "round": 1,
+      "clients": [
+        {
+          "client_id": "1",
+          "uncertainty": 0.0,
+          "threshold": 0.0,
+          "sent_update": true
+        }
+      ],
+      "updates_sent": 1,
+      "updates_possible": 1,
+      "cumulative_savings_pct": 0.0
+    },
+    {
+      "round": 2,
+      "clients": [
+        {
+          "client_id": "1",
+          "uncertainty": 0.0,
+          "threshold": 0.0,
+          "sent_update": true
+        }
+      ],
+      "updates_sent": 1,
+      "updates_possible": 1,
+      "cumulative_savings_pct": 0.0
+    }
+  ]
+}

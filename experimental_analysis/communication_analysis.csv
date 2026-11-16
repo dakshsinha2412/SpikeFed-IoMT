@@ -1,0 +1,3 @@
+Configuration,Measured upload bytes/round,Measured update bytes/client,Rounds,Calculated total upload bytes,Calculated total download bytes,Calculated parameter-exchange bytes,Scope
+IID,156768,52256,3,470304,470304,940608,Download calculated assuming global state distributed to all 3 participants; no transport framing/TLS measured
+Non-IID,156768,52256,3,470304,470304,940608,Download calculated assuming global state distributed to all 3 participants; no transport framing/TLS measured

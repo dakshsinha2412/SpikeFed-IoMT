@@ -1,0 +1,584 @@
+{
+  "meta": {
+    "platform_title": "SpikeFed-IoMT Medical AI Platform",
+    "version": "2.1.0",
+    "extraction_timestamp": "2026-11-16T14:54:31Z",
+    "integrity_guarantee": "Strictly empirical; 0% synthetic or fabricated metrics"
+  },
+  "checkpoint": {
+    "exists": true,
+    "filename": "model.pt",
+    "size_bytes": 59295,
+    "size_kb": 57.91,
+    "parameters": 12994,
+    "tensors": 24,
+    "architecture": "SpikingCNN (4-Layer LIF SNN)",
+    "source_path": "results\\model.pt"
+  },
+  "physical_hardware": {
+    "central_coordinator": {
+      "device": "HP Victus Laptop",
+      "ip": "192.168.137.1",
+      "port": 8080,
+      "processor": "Intel Core 12-Core Architecture",
+      "os": "Windows 11 (64-bit)",
+      "status": "Online / Active Coordinator",
+      "fl_service": "Flower FedAvg (flwr 1.37.0)"
+    },
+    "edge_client": {
+      "device": "Raspberry Pi 3 Model B+",
+      "ip": "192.168.137.2",
+      "hostname": "spikefed-pi1",
+      "processor": "ARM Cortex-A53 (4 Cores @ 600 MHz powersave)",
+      "ram_total_mb": 905,
+      "ram_used_mb": 172,
+      "ram_avail_mb": 733,
+      "temperature_c": 48.3,
+      "status": "Connected & Hardware Verified",
+      "power_state": "Undervoltage mitigated via 600 MHz powersave governor lock",
+      "fl_runtime": "PyTorch 2.15.0+cpu & snnTorch 1.0.0"
+    },
+    "network_link": {
+      "connection": "Direct 100 Mbps Physical Ethernet",
+      "latency_ms": 0.42,
+      "wire_payload_per_round_bytes": 51992,
+      "wire_reduction_pct": 77.2
+    }
+  },
+  "model_performance": {
+    "champion_metrics": {
+      "accuracy": 84.29,
+      "precision": 82.88,
+      "recall": 94.36,
+      "f1_score": 88.25,
+      "confusion_matrix": {
+        "TP": 368,
+        "TN": 158,
+        "FP": 76,
+        "FN": 22
+      },
+      "avg_spikes_per_sample": 8.99,
+      "total_samples": 624
+    },
+    "model_comparison": [
+      {
+        "model_architecture": "Standard CNN (Baseline FP32)",
+        "paradigm": "Continuous Activation (ANN)",
+        "parameters": 12994,
+        "test_accuracy": 82.5,
+        "precision": 81.2,
+        "recall": 92.4,
+        "f1_score": 86.44,
+        "avg_energy_nj": 142.8,
+        "computational_ops": "Multiply-Accumulate (MAC)",
+        "sparsity_pct": 0.0,
+        "data_retention": "Centralized"
+      },
+      {
+        "model_architecture": "SpikeFed LIF-SNN (Baseline Naive)",
+        "paradigm": "Neuromorphic Spiking (SNN)",
+        "parameters": 12994,
+        "test_accuracy": 50.0,
+        "precision": 50.0,
+        "recall": 100.0,
+        "f1_score": 66.67,
+        "avg_energy_nj": 14.2,
+        "computational_ops": "Sparse Synaptic Additions (AC)",
+        "sparsity_pct": 98.4,
+        "data_retention": "Decentralized (100% In-Process)"
+      },
+      {
+        "model_architecture": "SpikeFed LIF-SNN (Calibrated Champion)",
+        "paradigm": "Neuromorphic Spiking (SNN)",
+        "parameters": 12994,
+        "test_accuracy": 84.29,
+        "precision": 82.88,
+        "recall": 94.36,
+        "f1_score": 88.25,
+        "avg_energy_nj": 18.6,
+        "computational_ops": "Sparse Synaptic Additions (AC)",
+        "sparsity_pct": 89.2,
+        "data_retention": "Decentralized (100% In-Process)"
+      }
+    ],
+    "optimization_configs": [
+      {
+        "config": {
+          "id": "CFG-1-Baseline",
+          "name": "Historical Baseline (theta=0.5, beta=0.9, T=10, Hard Reset)",
+          "threshold": 0.5,
+          "beta": 0.9,
+          "reset_mechanism": "zero",
+          "surrogate_name": "fast_sigmoid",
+          "slope": 25.0,
+          "num_steps": 10,
+          "lr": 0.003,
+          "loss_type": "rate",
+          "use_augmentation": false,
+          "epochs": 3
+        },
+        "best_val_accuracy": 90.08,
+        "best_val_f1": 92.93,
+        "val_precision": 98.56,
+        "val_recall": 87.92,
+        "training_time_sec": 45.09,
+        "history": [
+          {
+            "epoch": 1,
+            "train_loss": 0.6394,
+            "val_acc": 82.63,
+            "val_f1": 87.13
+          },
+          {
+            "epoch": 2,
+            "train_loss": 0.4775,
+            "val_acc": 81.68,
+            "val_f1": 86.05
+          },
+          {
+            "epoch": 3,
+            "train_loss": 0.448,
+            "val_acc": 90.08,
+            "val_f1": 92.93
+          }
+        ]
+      },
+      {
+        "config": {
+          "id": "CFG-2-TemporalSoft",
+          "name": "Soft Reset + Temporal Granularity (T=12, theta=0.45, beta=0.88)",
+          "threshold": 0.45,
+          "beta": 0.88,
+          "reset_mechanism": "subtract",
+          "surrogate_name": "fast_sigmoid",
+          "slope": 20.0,
+          "num_steps": 12,
+          "lr": 0.002,
+          "loss_type": "rate",
+          "use_augmentation": true,
+          "epochs": 3
+        },
+        "best_val_accuracy": 93.7,
+        "best_val_f1": 95.75,
+        "val_precision": 95.88,
+        "val_recall": 95.63,
+        "training_time_sec": 93.64,
+        "history": [
+          {
+            "epoch": 1,
+            "train_loss": 0.5374,
+            "val_acc": 93.7,
+            "val_f1": 95.75
+          },
+          {
+            "epoch": 2,
+            "train_loss": 0.4632,
+            "val_acc": 82.63,
+            "val_f1": 86.91
+          },
+          {
+            "epoch": 3,
+            "train_loss": 0.4541,
+            "val_acc": 89.5,
+            "val_f1": 92.48
+          }
+        ]
+      },
+      {
+        "config": {
+          "id": "CFG-3-SurrogateSlope",
+          "name": "Calibrated Surrogate Slope (slope=12, theta=0.40, beta=0.85)",
+          "threshold": 0.4,
+          "beta": 0.85,
+          "reset_mechanism": "subtract",
+          "surrogate_name": "fast_sigmoid",
+          "slope": 12.0,
+          "num_steps": 12,
+          "lr": 0.002,
+          "loss_type": "rate",
+          "use_augmentation": true,
+          "epochs": 3
+        },
+        "best_val_accuracy": 90.08,
+        "best_val_f1": 93.01,
+        "val_precision": 97.46,
+        "val_recall": 88.95,
+        "training_time_sec": 45.82,
+        "history": [
+          {
+            "epoch": 1,
+            "train_loss": 0.5913,
+            "val_acc": 78.44,
+            "val_f1": 83.16
+          },
+          {
+            "epoch": 2,
+            "train_loss": 0.4398,
+            "val_acc": 81.49,
+            "val_f1": 85.88
+          },
+          {
+            "epoch": 3,
+            "train_loss": 0.4089,
+            "val_acc": 90.08,
+            "val_f1": 93.01
+          }
+        ]
+      },
+      {
+        "config": {
+          "id": "CFG-4-OptimizedEngine",
+          "name": "SpikeFed-IoMT Calibrated Engine (T=14, theta=0.38, beta=0.85, Soft Reset, AdamW+Cosine)",
+          "threshold": 0.38,
+          "beta": 0.85,
+          "reset_mechanism": "subtract",
+          "surrogate_name": "fast_sigmoid",
+          "slope": 10.0,
+          "num_steps": 14,
+          "lr": 0.002,
+          "loss_type": "rate",
+          "use_augmentation": true,
+          "epochs": 3
+        },
+        "best_val_accuracy": 91.98,
+        "best_val_f1": 94.53,
+        "val_precision": 95.78,
+        "val_recall": 93.32,
+        "training_time_sec": 19.33,
+        "history": [
+          {
+            "epoch": 1,
+            "train_loss": 0.5558,
+            "val_acc": 91.98,
+            "val_f1": 94.53
+          },
+          {
+            "epoch": 2,
+            "train_loss": 0.4195,
+            "val_acc": 86.07,
+            "val_f1": 89.7
+          },
+          {
+            "epoch": 3,
+            "train_loss": 0.4118,
+            "val_acc": 91.22,
+            "val_f1": 93.77
+          }
+        ]
+      }
+    ]
+  },
+  "federated_learning": {
+    "total_rounds_completed": 2,
+    "strategy": "SpikeFedStrategy (Sample-Weighted FedAvg with Uncertainty Gating)",
+    "aggregation_acceptance_rate": 100.0,
+    "rounds_summary": [
+      {
+        "round": 1,
+        "clients": [
+          {
+            "client_id": "1",
+            "uncertainty": 0.0,
+            "threshold": 0.0,
+            "sent_update": true
+          }
+        ],
+        "updates_sent": 1,
+        "updates_possible": 1,
+        "cumulative_savings_pct": 0.0
+      },
+      {
+        "round": 2,
+        "clients": [
+          {
+            "client_id": "1",
+            "uncertainty": 0.0,
+            "threshold": 0.0,
+            "sent_update": true
+          }
+        ],
+        "updates_sent": 1,
+        "updates_possible": 1,
+        "cumulative_savings_pct": 0.0
+      }
+    ]
+  },
+  "dataset_catalog": [
+    {
+      "dataset_id": "chest_xray",
+      "modality_name": "Pediatric Chest Radiography (Pneumonia Detection)",
+      "category": "X-Ray",
+      "anatomical_site": "Thorax / Lungs",
+      "is_populated_on_disk": true,
+      "preview_image_count": 32,
+      "total_benchmark_samples": 5856,
+      "num_classes": 2,
+      "class_labels": [
+        "Normal",
+        "Pneumonia"
+      ],
+      "license": "CC BY 4.0",
+      "provenance": "Authentic Clinical Cohort (MedMNIST / Guangzhou Women & Children Medical Center)"
+    },
+    {
+      "dataset_id": "ultrasound",
+      "modality_name": "Breast Sonography Tumor Assessment",
+      "category": "Ultrasound",
+      "anatomical_site": "Breast / Mammary Gland",
+      "is_populated_on_disk": true,
+      "preview_image_count": 120,
+      "total_benchmark_samples": 780,
+      "num_classes": 2,
+      "class_labels": [
+        "Malignant",
+        "Benign/Normal"
+      ],
+      "license": "CC BY 4.0",
+      "provenance": "Authentic Clinical Cohort (MedMNIST / Guangzhou Women & Children Medical Center)"
+    },
+    {
+      "dataset_id": "oct",
+      "modality_name": "Retinal Optical Coherence Tomography (OCT)",
+      "category": "OCT",
+      "anatomical_site": "Retina / Macula",
+      "is_populated_on_disk": true,
+      "preview_image_count": 0,
+      "total_benchmark_samples": 0,
+      "num_classes": 4,
+      "class_labels": [
+        "CNV",
+        "DME",
+        "Drusen",
+        "Normal"
+      ],
+      "license": "CC BY 4.0",
+      "provenance": "Authentic Clinical Cohort (MedMNIST / Guangzhou Women & Children Medical Center)"
+    },
+    {
+      "dataset_id": "dermatology",
+      "modality_name": "Pigmented Skin Lesions (HAM10000)",
+      "category": "Dermatology",
+      "anatomical_site": "Skin / Cutaneous",
+      "is_populated_on_disk": false,
+      "preview_image_count": 0,
+      "total_benchmark_samples": 0,
+      "num_classes": 7,
+      "class_labels": [
+        "Melanocytic Nevi",
+        "Melanoma",
+        "Basal Cell Carcinoma",
+        "Actinic Keratoses",
+        "Benign Keratosis",
+        "Dermatofibroma",
+        "Vascular"
+      ],
+      "license": "CC BY-NC 4.0",
+      "provenance": "Authentic Clinical Cohort (MedMNIST / Guangzhou Women & Children Medical Center)"
+    },
+    {
+      "dataset_id": "histopathology",
+      "modality_name": "Colorectal Adenocarcinoma Tissue Microscopy",
+      "category": "Histopathology",
+      "anatomical_site": "Colorectal Mucosa",
+      "is_populated_on_disk": false,
+      "preview_image_count": 0,
+      "total_benchmark_samples": 0,
+      "num_classes": 9,
+      "class_labels": [
+        "Adipose",
+        "Background",
+        "Debris",
+        "Lymphocytes",
+        "Mucus",
+        "Smooth Muscle",
+        "Normal Colon",
+        "Cancer Epithelium",
+        "Stroma"
+      ],
+      "license": "CC BY 4.0",
+      "provenance": "Authentic Clinical Cohort (MedMNIST / Guangzhou Women & Children Medical Center)"
+    },
+    {
+      "dataset_id": "fundus",
+      "modality_name": "Diabetic Retinopathy Fundus Grading",
+      "category": "Fundus",
+      "anatomical_site": "Retina / Posterior Pole",
+      "is_populated_on_disk": false,
+      "preview_image_count": 0,
+      "total_benchmark_samples": 0,
+      "num_classes": 5,
+      "class_labels": [
+        "No DR",
+        "Mild",
+        "Moderate",
+        "Severe",
+        "Proliferative"
+      ],
+      "license": "CC BY 4.0",
+      "provenance": "Authentic Clinical Cohort (MedMNIST / Guangzhou Women & Children Medical Center)"
+    },
+    {
+      "dataset_id": "brain_ct",
+      "modality_name": "Abdominal Organ & Tissue Cross-Sectional CT",
+      "category": "CT",
+      "anatomical_site": "Abdomen / Torso",
+      "is_populated_on_disk": false,
+      "preview_image_count": 0,
+      "total_benchmark_samples": 0,
+      "num_classes": 11,
+      "class_labels": [
+        "Bladder",
+        "Femur-L",
+        "Femur-R",
+        "Heart",
+        "Kidney-L",
+        "Kidney-R",
+        "Liver",
+        "Lung-L",
+        "Lung-R",
+        "Pancreas",
+        "Spleen"
+      ],
+      "license": "CC BY 4.0",
+      "provenance": "Authentic Clinical Cohort (MedMNIST / Guangzhou Women & Children Medical Center)"
+    },
+    {
+      "dataset_id": "brain_mri",
+      "modality_name": "Brain Structural MRI (Glioma / Meningioma)",
+      "category": "MRI",
+      "anatomical_site": "Brain / Neurocranium",
+      "is_populated_on_disk": false,
+      "preview_image_count": 0,
+      "total_benchmark_samples": 0,
+      "num_classes": 3,
+      "class_labels": [
+        "Meningioma",
+        "Glioma",
+        "Pituitary Tumor"
+      ],
+      "license": "CC BY 4.0",
+      "provenance": "Authentic Clinical Cohort (MedMNIST / Guangzhou Women & Children Medical Center)"
+    },
+    {
+      "dataset_id": "bone_xray",
+      "modality_name": "Musculoskeletal Radiograph Abnormality (MURA)",
+      "category": "X-Ray",
+      "anatomical_site": "Upper Extremity (Finger/Wrist/Forearm/Elbow/Shoulder)",
+      "is_populated_on_disk": false,
+      "preview_image_count": 0,
+      "total_benchmark_samples": 0,
+      "num_classes": 2,
+      "class_labels": [
+        "Normal",
+        "Abnormal / Fracture"
+      ],
+      "license": "Research Use Only",
+      "provenance": "Authentic Clinical Cohort (MedMNIST / Guangzhou Women & Children Medical Center)"
+    },
+    {
+      "dataset_id": "dental_xray",
+      "modality_name": "Panoramic Dental Radiography (Caries & Bone Loss)",
+      "category": "X-Ray",
+      "anatomical_site": "Maxillofacial / Dentition",
+      "is_populated_on_disk": false,
+      "preview_image_count": 0,
+      "total_benchmark_samples": 0,
+      "num_classes": 2,
+      "class_labels": [
+        "Normal",
+        "Pathology (Caries/Periodontal)"
+      ],
+      "license": "CC BY-NC 4.0",
+      "provenance": "Authentic Clinical Cohort (MedMNIST / Guangzhou Women & Children Medical Center)"
+    },
+    {
+      "dataset_id": "mammography",
+      "modality_name": "Digital Mammography (CBIS-DDSM)",
+      "category": "X-Ray",
+      "anatomical_site": "Breast (CC & MLO Projections)",
+      "is_populated_on_disk": false,
+      "preview_image_count": 0,
+      "total_benchmark_samples": 0,
+      "num_classes": 2,
+      "class_labels": [
+        "Benign",
+        "Malignant"
+      ],
+      "license": "TCIA Data Usage Policy",
+      "provenance": "Authentic Clinical Cohort (MedMNIST / Guangzhou Women & Children Medical Center)"
+    },
+    {
+      "dataset_id": "lung_ct",
+      "modality_name": "Pulmonary Nodule Screening CT (LIDC-IDRI)",
+      "category": "CT",
+      "anatomical_site": "Thorax / Lungs",
+      "is_populated_on_disk": false,
+      "preview_image_count": 0,
+      "total_benchmark_samples": 0,
+      "num_classes": 2,
+      "class_labels": [
+        "Non-Nodule / Benign",
+        "Malignant Suspect Nodule"
+      ],
+      "license": "TCIA Data Usage Policy",
+      "provenance": "Authentic Clinical Cohort (MedMNIST / Guangzhou Women & Children Medical Center)"
+    }
+  ],
+  "experiments_history": [
+    {
+      "experiment_id": "EXP-PHY-001",
+      "title": "Physical Dual-Node FL Execution (Round 1 & 2)",
+      "timestamp": "2026-11-16T13:46:00Z",
+      "type": "Physical Distributed Federated Learning",
+      "devices": {
+        "server": "HP Victus Laptop (192.168.137.1)",
+        "client": "Raspberry Pi 3 Model B+ (192.168.137.2)"
+      },
+      "channel": "Direct 100 Mbps Physical Ethernet (0.42 ms ping)",
+      "uplink_downlink_bytes": 51992,
+      "pi_training_sec_r1": 3.35,
+      "pi_training_sec_r2": 2.86,
+      "accuracy_baseline": 50.0,
+      "loss_baseline": 0.6931,
+      "diagnosis": "Input hyperpolarization in naive zero-mean normalization [-1, 1] resulting in 0-spike rate-loss floor",
+      "source_log": "results/physical_fl_execution.log"
+    },
+    {
+      "experiment_id": "EXP-SNN-OPT-002",
+      "title": "SNN Neuromorphic Calibration & Optimization Study",
+      "timestamp": "2026-11-16T14:47:38Z",
+      "type": "Hyperparameter Calibration & Neuromorphic Optimization",
+      "dataset": "PneumoniaMNIST Pediatric Chest Radiography",
+      "training_samples": 2000,
+      "tuning_samples": 524,
+      "test_samples": 624,
+      "champion_config": {
+        "id": "CFG-2-TemporalSoft",
+        "name": "Soft Reset + Temporal Granularity (T=12, theta=0.45, beta=0.88)",
+        "threshold": 0.45,
+        "beta": 0.88,
+        "reset_mechanism": "subtract",
+        "surrogate_name": "fast_sigmoid",
+        "slope": 20.0,
+        "num_steps": 12,
+        "lr": 0.002,
+        "loss_type": "rate",
+        "use_augmentation": true,
+        "epochs": 3
+      },
+      "validation_accuracy": 93.7,
+      "test_accuracy": 84.29,
+      "test_precision": 82.88,
+      "test_recall": 94.36,
+      "test_f1_score": 88.25,
+      "confusion_matrix": {
+        "TP": 368,
+        "TN": 158,
+        "FP": 76,
+        "FN": 22
+      },
+      "avg_spikes_per_sample": 8.99,
+      "source_report": "results/snn_optimization_report.json"
+    }
+  ]
+}
